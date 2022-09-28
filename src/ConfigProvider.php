@@ -29,7 +29,7 @@ class ConfigProvider
             ],
             'publish' => [
                 [
-                    'id' => 'auth',
+                    'id' => 'gen',
                     'description' => 'php gen config',
                     'source' => __DIR__ . '/../publish/gen.php',
                     'destination' => BASE_PATH . '/config/autoload/gen.php',

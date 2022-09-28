@@ -20,13 +20,14 @@ class RouteCommand extends HyperfCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('route:command');
+        parent::__construct('dengpju:route');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Viewing the Route List');
+        $description = str_pad("Look Route List.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . 'php bin/hyperf.php route:command server=http');
     }
 
     /**

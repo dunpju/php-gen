@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * php bin/hyperf.php model:command table=all conn=default
+ * php bin/hyperf.php model:command conn=default table=all
  * Class ModelCommand
  * @package App\Command
  */
@@ -21,14 +21,16 @@ class ModelCommand extends BaseCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('model:command');
+        parent::__construct('dengpju:model');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Model');
-        $this->addOption('table', 't', InputOption::VALUE_REQUIRED, '表名,all表示所有表');
+        $description = str_pad("Build Model.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . 'php bin/hyperf.php model:command conn=default table=all Or php bin/hyperf.php model:command conn=default table=TableName');
+        $this->addOption('conn', 'c', InputOption::VALUE_REQUIRED, 'Data connection');
+        $this->addOption('table', 't', InputOption::VALUE_REQUIRED, 'Table Name,all Generate Full Table Model');
     }
 
     /**
@@ -37,8 +39,8 @@ class ModelCommand extends BaseCommand
     protected function getArguments(): array
     {
         return [
+            ['conn', InputArgument::REQUIRED, 'Data connection,Default Value default'],
             ['table', InputArgument::REQUIRED, 'Table Name,all Generate Full Table Model'],
-            ['conn', InputArgument::OPTIONAL, 'Data connection,Default Value default'],
         ];
     }
 

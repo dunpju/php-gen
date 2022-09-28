@@ -33,13 +33,14 @@ class EnumCommand extends BaseCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('enum:command');
+        parent::__construct('dengpju:enum');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Enum');
+        $description = str_pad("Build Enum.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . "php bin/hyperf.php enum:command conn=default name=yes_or_no flag='是否:yes-1-是,no-2-否'");
     }
 
     /**

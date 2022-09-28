@@ -36,13 +36,14 @@ class ControllerCommand extends BaseCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('controller:command');
+        parent::__construct('dengpju:controller');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Controller');
+        $description = str_pad("Build Controller.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . 'php bin/hyperf.php controller:command name=test path="Test"');
     }
 
     /**

@@ -34,13 +34,14 @@ class EntityCommand extends BaseCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('entity:command');
+        parent::__construct('dengpju:entity');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Entity');
+        $description = str_pad("Build Entity.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . "php bin/hyperf.php entity:command conn=default model=all Or php bin/hyperf.php entity:command conn=default model=ModelName");
     }
 
     /**

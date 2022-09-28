@@ -38,13 +38,14 @@ class ServiceCommand extends BaseCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('service:command');
+        parent::__construct('dengpju:service');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Service');
+        $description = str_pad("Build Service.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . 'php bin/hyperf.php service:command name=name path=path');
     }
 
     /**

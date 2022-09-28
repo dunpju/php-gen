@@ -36,16 +36,14 @@ class ValidateCommand extends BaseCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        $this->uses = config("gen.validate.uses");
-        $this->baseStorePath = config("gen.validate.base_store_path");
-        $this->baseNamespace = config("gen.validate.base_namespace");
-        parent::__construct('validate:command');
+        parent::__construct('dengpju:validate');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Build Validate');
+        $description = str_pad("Build Validate.", 20, " ", STR_PAD_RIGHT);
+        $this->setDescription($description . 'php bin/hyperf.php validate:command name=name path=path');
     }
 
     /**
@@ -61,6 +59,10 @@ class ValidateCommand extends BaseCommand
 
     public function handle()
     {
+        $this->uses = config("gen.validate.uses");
+        $this->baseStorePath = config("gen.validate.base_store_path");
+        $this->baseNamespace = config("gen.validate.base_namespace");
+
         $name = $this->input->getArgument('name');
         $path = (string)$this->input->getArgument('path');
         $name = str_replace("name=", "", $name);
