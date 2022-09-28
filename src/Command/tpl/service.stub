@@ -1,0 +1,100 @@
+<?php
+declare(strict_types=1);
+
+
+namespace %NAMESPACE%;
+
+%USES%
+
+class %CLASS%
+{
+    %TRAIT%
+
+    /**
+     * @param array $params
+     */
+    public function list(array $params)
+    {
+        // 校验
+        if (true !== $code = validate($params, $this->listValidate())) {
+            throw new ValidateException($code);
+        }
+    }
+
+    /**
+     * @param array $params
+     */
+    public function add(array $params)
+    {
+        // 校验
+        if (true !== $code = validate($params, $this->addValidate())) {
+            throw new ValidateException($code);
+        }
+
+        // 数据入库
+        Db::beginTransaction();
+        try {
+            // TODO::业务代码
+
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollBack();
+            throw new BusinessException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $params
+     */
+    public function edit(array $params)
+    {
+        // 校验
+        if (true !== $code = validate($params, $this->editValidate())) {
+            throw new ValidateException($code);
+        }
+
+        // 数据入库
+        Db::beginTransaction();
+        try {
+            // TODO::业务代码
+
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollBack();
+            throw new BusinessException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $params
+     */
+    public function details(array $params)
+    {
+        // 校验
+        if (true !== $code = validate($params, $this->detailsValidate())) {
+            throw new ValidateException($code);
+        }
+    }
+
+    /**
+     * @param array $params
+     */
+    public function delete(array $params)
+    {
+        // 校验
+        if (true !== $code = validate($params, $this->deleteValidate())) {
+            throw new ValidateException($code);
+        }
+
+        // 数据入库
+        Db::beginTransaction();
+        try {
+            // TODO::业务代码
+
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollBack();
+            throw new BusinessException($e->getMessage());
+        }
+    }
+}

@@ -1,0 +1,117 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+%USES%
+
+/**
+ * Class %CLASS%
+ * @package %NAMESPACE%
+ */
+class %CLASS% extends %INHERITANCE%
+{
+    /**
+     * @var %MODEL%
+     */
+    public $model;
+
+    /**
+     * %CLASS% constructor.
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function __construct()
+    {
+        $this->model = new %MODEL%();
+        parent::__construct();
+    }
+
+    /**
+     * @param %ENTITY% $entity
+     */
+    public function setData(%ENTITY% $entity)
+    {
+        if ($entity->getIsEdit()) {//编辑
+            if (empty($entity->%PRIMARY_KEY%)) {
+                throw new DaoException(ResponseCode::getMessage(ResponseCode::PRIMARY_ID_ERROR, ["%PRIMARY_KEY%"]), ResponseCode::PRIMARY_ID_ERROR);
+            }
+            $this->model = $this->model::query()->find($entity->%PRIMARY_KEY%);
+            if (empty($this->model)) {
+                throw new DaoException(ResponseCode::getMessage(ResponseCode::NOT_EXIST_ERROR, ["%MODEL%"]), ResponseCode::NOT_EXIST_ERROR);
+            }
+            if ($entity->flagDelete) {
+                //TODO::映射入库字段
+            } else {
+                //TODO::映射入库字段
+            }
+            $this->model->update_time = $entity->updateTime;
+        } else { // 新增
+            //TODO::映射入库字段
+            %FIELDS_MAPPING%
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function add(): int
+    {
+        $this->model->save();
+        return $this->model->{$this->primaryKey};
+    }
+
+    /**
+     * @return bool
+     */
+    public function update(): bool
+    {
+        return $this->model->save();
+    }
+
+    /**
+     * @param int $%PRIMARY_KEY%
+     * @param array|string[] $fields
+     * @return %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|null
+     */
+    public function getBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%, array $fields = ["*"]): %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|null
+    {
+        return $this->model::query()->select($fields)->where($this->primaryKey, $%PRIMARY_KEY%)->first();
+    }
+
+    /**
+     * @param array $%PRIMARY_KEY%s
+     * @param array|string[] $fields
+     * @return %MODEL%[]|\Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection|\Hyperf\Database\Query\Builder[]|\Hyperf\Utils\Collection
+     */
+    public function getBy%UC_PRIMARY_KEY%s(array $%PRIMARY_KEY%s, array $fields = ["*"])
+    {
+        return $this->model::query()->select($fields)->whereIn($this->primaryKey, $%PRIMARY_KEY%s)->get();
+    }
+
+    /**
+     * @param int $%PRIMARY_KEY%
+     * @return bool|int
+     */
+    public function deleteBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%): bool|int
+    {
+        return $this->model::where($this->primaryKey, $%PRIMARY_KEY%)->delete();
+    }
+
+    /**
+     * @param array $where
+     * @param array|string[] $fields
+     * @return \Hyperf\Contract\LengthAwarePaginatorInterface
+     */
+    public function getList(array $where, array $fields = ["*"]): \Hyperf\Contract\LengthAwarePaginatorInterface
+    {
+        $query = $this->model::query();
+
+        //if (isset($where['keyword'])) {
+        //    $query->where('keyword', 'like', "%{$where['keyword']}%");
+        //}
+
+        return $query->paginate($this->perPage, $fields, 'page', $this->page);
+    }
+}

@@ -1,0 +1,91 @@
+<?php
+declare(strict_types=1);
+
+
+namespace %NAMESPACE%;
+
+
+%USES%
+
+/**
+ * 规则参考文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+ * Trait %TRAIT%
+ * @package %NAMESPACE%
+ */
+trait %TRAIT%
+{
+    /**
+     * @return RuleMessage
+     */
+    public function listValidate(): RuleMessage
+    {
+        // 规则文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+        $rule = [
+
+        ];
+        $msg = [
+
+        ];
+        return (new RuleMessage($rule, $msg));
+    }
+
+    /**
+     * @return RuleMessage
+     */
+    public function addValidate(): RuleMessage
+    {
+        // 规则文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+        $rule = [
+
+        ];
+        $msg = [
+
+        ];
+        return (new RuleMessage($rule, $msg));
+    }
+
+    /**
+     * @return RuleMessage
+     */
+    public function editValidate(): RuleMessage
+    {
+        // 规则文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+        $rule = [
+
+        ];
+        $msg = [
+
+        ];
+        return (new RuleMessage($rule, $msg));
+    }
+
+    /**
+     * @return RuleMessage
+     */
+    public function detailsValidate(): RuleMessage
+    {
+        // 规则文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+        $rule = [
+
+        ];
+        $msg = [
+
+        ];
+        return (new RuleMessage($rule, $msg));
+    }
+
+    /**
+     * @return RuleMessage
+     */
+    public function deleteValidate(): RuleMessage
+    {
+        // 规则文档 https://hyperf.wiki/3.0/#/zh-cn/validation
+        $rule = [
+
+        ];
+        $msg = [
+
+        ];
+        return (new RuleMessage($rule, $msg));
+    }
+}

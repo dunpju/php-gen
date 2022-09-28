@@ -1,0 +1,90 @@
+<?php
+declare(strict_types=1);
+
+
+namespace %NAMESPACE%;
+
+%USES%
+
+/**
+ * Class %CLASS%
+ * @package %NAMESPACE%
+ */
+#[Controller]
+class %CLASS% extends %INHERITANCE%
+{
+    /**
+     * @Message("列表")
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("list")]
+    public function list(): \Psr\Http\Message\ResponseInterface
+    {
+        $params = $this->request->all();
+        $%SERVICE% = new %SERVICE%();
+        $res = $%SERVICE%->list($params);
+        return $this->success($res);
+    }
+
+    /**
+     * @Message("新增")
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PostMapping("add")]
+    public function add(): \Psr\Http\Message\ResponseInterface
+    {
+        $params = $this->request->all();
+        $%SERVICE% = new %SERVICE%();
+        $res = $%SERVICE%->add($params);
+        return $this->success($res);
+    }
+
+    /**
+     * @Message("编辑")
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PutMapping("edit")]
+    public function edit(): \Psr\Http\Message\ResponseInterface
+    {
+        $params = $this->request->all();
+        $%SERVICE% = new %SERVICE%();
+        $res = $%SERVICE%->edit($params);
+        return $this->success($res);
+    }
+
+    /**
+     * @Message("详情")
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("details")]
+    public function details(): \Psr\Http\Message\ResponseInterface
+    {
+        $params = $this->request->all();
+        $%SERVICE% = new %SERVICE%();
+        $res = $%SERVICE%->details($params);
+        return $this->success($res);
+    }
+
+    /**
+     * @Message("删除")
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[DeleteMapping("delete")]
+    public function delete(): \Psr\Http\Message\ResponseInterface
+    {
+        $params = $this->request->all();
+        $%SERVICE% = new %SERVICE%();
+        $res = $%SERVICE%->delete($params);
+        return $this->success($res);
+    }
+}
