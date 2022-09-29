@@ -21,15 +21,11 @@ class EnumCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        "use App\\Annotations\\Message",
-        "use App\\Enum\\EnumBase"
-    ];
-
+    protected array $uses = [];
     /**
      * @var string
      */
-    protected string $inheritance = "EnumBase";
+    protected string $inheritance = "";
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -65,29 +61,36 @@ class EnumCommand extends BaseCommand
         $conn = str_replace("conn=", "", $conn);
         if (!in_array($conn, $conns)) {
             echo "Connection:{$conn} No Exist" . PHP_EOL;
-            exit();
+            exit(1);
         }
-        $connConfig = config("databases.{$conn}");
-        $commands = $connConfig['commands'];
-        $prefix = $connConfig['prefix'];
-        $genModel = $commands['gen:model'];
-        $modelPath = $genModel['path'];
-        $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
-        $scanPath = BASE_PATH . "/{$modelPath}";
-        $basename = basename($scanPath);
 
-        $storePath = BASE_PATH . "/app/Enum/" . ucfirst(CamelizeUtil::camelize($conn));
+        $this->uses = config("gen.enum.uses");
+        $this->inheritance = config("gen.enum.inheritance");
+        $this->baseStorePath = config("gen.enum.base_store_path");
+        $this->baseNamespace = config("gen.enum.base_namespace");
+
+        $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
         if (!MkdirUtil::dir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
+        if (str_contains($this->inheritance, "\\")) {
+            $this->uses[] = $this->inheritance;
+            $this->uses = array_unique($this->uses);
+            $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
+        }
+
         $name = str_replace("name=", "", $name);
         $name = ucfirst(CamelizeUtil::camelize($name));
         $fileName = "Enum" . $name;
         $file = $storePath . "/{$fileName}.php";
+
         if (!file_exists($file)) {
-            $namespace = "App\\Enum\\" . basename(dirname($file));
-            $uses = $this->uses;
+            $namespace = $this->baseNamespace . basename(dirname($file));
+            $uses = [];
+            foreach ($this->uses as $use) {
+                $uses[] = "use {$use}";
+            }
 
             $flag = str_replace("flag=", "", $flag);
             $flags = explode(":", $flag);
@@ -112,8 +115,7 @@ class EnumCommand extends BaseCommand
     }
 
     /**
-     * @param string $primaryKey
-     * @param array $attributes
+     * @param array $consts
      * @return string
      */
     protected function consts(array $consts): string

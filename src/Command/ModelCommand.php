@@ -55,7 +55,7 @@ class ModelCommand extends BaseCommand
         $conn = str_replace("conn=", "", $conn);
         if (!in_array($conn, $conns)) {
             echo "Connection:{$conn} No Exist" . PHP_EOL;
-            exit();
+            exit(1);
         }
 
         $connConfig = config("databases.{$conn}");
@@ -64,10 +64,10 @@ class ModelCommand extends BaseCommand
         $path = $genModel['path'];
         if (!MkdirUtil::dir(BASE_PATH . "/{$path}")) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
 
-        $uses = $genModel['uses'];
+        $uses = isset($genModel['uses']) ? $genModel['uses'] : null;
         $inheritance = $genModel['inheritance'];
 
         $database = $connConfig['database'];
@@ -86,10 +86,12 @@ class ModelCommand extends BaseCommand
         foreach ($tables as $table) {
             $tableName = $table->{"Tables_in_{$database}"};
             if (!preg_match("/\d+/", $tableName)) {
-                $cmd = "php bin/hyperf.php {$command} {$tableName} --pool='{$conn}' --path='{$path}' --uses='{$uses}' --inheritance={$inheritance} --with-comments --force-casts";
-                //echo $cmd . PHP_EOL;
+                $cmd = "php bin/hyperf.php {$command} {$tableName} --pool='{$conn}' --path='{$path}' --inheritance={$inheritance} --with-comments";
+                if ($uses) {
+                    $cmd .= " --uses='{$uses}'";
+                }
                 $res = `$cmd`;
-                echo $res . PHP_EOL;
+                echo $res;
             }
         }
         $this->line('finish', 'info');

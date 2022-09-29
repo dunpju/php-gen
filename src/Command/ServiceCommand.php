@@ -22,16 +22,11 @@ class ServiceCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        RequestTrait::class,
-        Db::class
-    ];
+    protected array $uses = [];
     /**
      * @var array|string[]
      */
-    protected array $traits = [
-        RequestTrait::class,
-    ];
+    protected array $traits = [];
     /**
      * @var string
      */
@@ -78,8 +73,24 @@ class ServiceCommand extends BaseCommand
 
     public function handle()
     {
-        $this->uses = array_merge($this->uses, config("gen.service.uses"));
-        $this->traits = array_merge($this->traits, config("gen.service.traits"));
+        $name = $this->input->getArgument('name');
+        $path = (string)$this->input->getArgument('path');
+        $name = str_replace("name=", "", $name);
+        if ($path) {
+            $path = str_replace("path=", "", $path);
+        }
+        if ($path) {
+            $storePath = $this->baseStorePath . $path;
+        } else {
+            $storePath = $this->baseStorePath;
+        }
+        if (!MkdirUtil::dir($storePath)) {
+            echo "Failed to create a directory." . PHP_EOL;
+            exit(1);
+        }
+
+        $this->uses = config("gen.service.uses");
+        $this->traits = config("gen.service.traits");
         $this->baseStorePath = config("gen.service.base_store_path");
         $this->baseNamespace = config("gen.service.base_namespace");
         $this->validateBaseNamespace = config("gen.validate.base_namespace");
@@ -103,22 +114,6 @@ class ServiceCommand extends BaseCommand
         if (str_contains($businessException, "\\")) {
             $this->uses[] = $businessException;
             $businessException = basename(str_replace("\\", "/", $businessException));
-        }
-
-        $name = $this->input->getArgument('name');
-        $path = (string)$this->input->getArgument('path');
-        $name = str_replace("name=", "", $name);
-        if ($path) {
-            $path = str_replace("path=", "", $path);
-        }
-        if ($path) {
-            $storePath = $this->baseStorePath . $path;
-        } else {
-            $storePath = $this->baseStorePath;
-        }
-        if (!MkdirUtil::dir($storePath)) {
-            echo "Failed to create a directory." . PHP_EOL;
-            exit(1);
         }
 
         $serviceName = ucfirst(str_replace("Service", "", $name) . "Service");
