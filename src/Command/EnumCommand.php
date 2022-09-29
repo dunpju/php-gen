@@ -76,7 +76,7 @@ class EnumCommand extends BaseCommand
         }
         if (str_contains($this->inheritance, "\\")) {
             $this->uses[] = $this->inheritance;
-            $this->uses = array_unique($this->uses);
+            $this->uses = array_filter(array_unique($this->uses));
             $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
         }
 
@@ -87,6 +87,7 @@ class EnumCommand extends BaseCommand
 
         if (!file_exists($file)) {
             $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+            $this->uses = array_filter(array_unique($this->uses));
             $uses = [];
             foreach ($this->uses as $use) {
                 $uses[] = "use {$use}";

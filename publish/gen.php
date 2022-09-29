@@ -1,14 +1,40 @@
 <?php
 declare(strict_types=1);
 
-
 return [
+    "controller" => [
+        "uses" => [
+            Dengpju\PhpGen\Annotations\Message::class,
+            Hyperf\HttpServer\Annotation\Controller::class,
+            Hyperf\HttpServer\Annotation\DeleteMapping::class,
+            Hyperf\HttpServer\Annotation\GetMapping::class,
+            Hyperf\HttpServer\Annotation\PostMapping::class,
+            Hyperf\HttpServer\Annotation\PutMapping::class,
+        ],
+        "inheritance" => Dengpju\PhpGen\Abstracts\BaseController::class,
+        // 基础存储路径
+        "base_store_path" => BASE_PATH . "/app/Controller",
+        // 基础命名空间
+        "base_namespace" => "App\\Controller\\",
+    ],
+    "dao" => [
+        "uses" => [
+            Dengpju\PhpGen\Constants\ResponseCode::class,
+            Dengpju\PhpGen\Abstracts\BaseDao::class,
+            Dengpju\PhpGen\Exception\DaoException::class,
+        ],
+        "inheritance" => Dengpju\PhpGen\Abstracts\BaseDao::class,
+        // 基础存储路径
+        "base_store_path" => BASE_PATH . "/app/Dao",
+        // 基础命名空间
+        "base_namespace" => "App\\Dao\\",
+    ],
     "entity" => [
         "uses" => [
             Dengpju\PhpGen\Annotations\Message::class,
-            Dengpju\PhpGen\Entity\BaseEntity::class
+            Dengpju\PhpGen\Abstracts\BaseEntity::class
         ],
-        "inheritance" => Dengpju\PhpGen\Entity\BaseEntity::class,
+        "inheritance" => Dengpju\PhpGen\Abstracts\BaseEntity::class,
         // 基础存储路径
         "base_store_path" => BASE_PATH . "/app/Entity",
         // 基础命名空间
@@ -17,9 +43,9 @@ return [
     "enum" => [
         "uses" => [
             Dengpju\PhpGen\Annotations\Message::class,
-            Dengpju\PhpGen\Enum\EnumBase::class
+            Dengpju\PhpGen\Abstracts\BaseEnum::class
         ],
-        "inheritance" => Dengpju\PhpGen\Enum\EnumBase::class,
+        "inheritance" => Dengpju\PhpGen\Abstracts\BaseEnum::class,
         // 基础存储路径
         "base_store_path" => BASE_PATH . "/app/Enum",
         // 基础命名空间

@@ -20,19 +20,12 @@ class ControllerCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        "use Dengpju\PhpGen\Annotations\Message",
-        "use Hyperf\HttpServer\Annotation\Controller",
-        "use Hyperf\HttpServer\Annotation\DeleteMapping",
-        "use Hyperf\HttpServer\Annotation\GetMapping",
-        "use Hyperf\HttpServer\Annotation\PostMapping",
-        "use Hyperf\HttpServer\Annotation\PutMapping"
-    ];
+    protected array $uses = [];
 
     /**
      * @var string
      */
-    protected string $inheritance = "BaseController";
+    protected string $inheritance = "";
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -43,7 +36,7 @@ class ControllerCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Controller.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php controller:command name=test path="Test"');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:controller name=test path="Test"');
     }
 
     /**
@@ -62,37 +55,64 @@ class ControllerCommand extends BaseCommand
         $name = $this->input->getArgument('name');
         $path = (string)$this->input->getArgument('path');
         $name = str_replace("name=", "", $name);
+
+        $this->uses = config("gen.controller.uses");
+        $this->inheritance = config("gen.controller.inheritance");
+        $this->baseStorePath = config("gen.controller.base_store_path");
+        $this->baseNamespace = config("gen.controller.base_namespace");
+        $serviceBaseNamespace = config("gen.service.base_namespace");
+
+        $this->combine();
+
         if ($path) {
             $path = str_replace("path=", "", $path);
-            $storePath = BASE_PATH . "/app/Controller/" . $path;
+        }
+        if ($path) {
+            $storePath = rtrim($this->baseStorePath, "/") . "/" . $path;
         } else {
-            $storePath = BASE_PATH . "/app/Controller";
+            $storePath = $this->baseStorePath;
         }
         if (!MkdirUtil::dir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
         $controllerName = ucfirst(str_replace("Controller", "", $name) . "Controller");
         $file = $storePath . "/{$controllerName}.php";
         if (!file_exists($file)) {
-            $namespace = "App\\Controller\\" . str_replace("/", "\\", $path);
+            if ($path) {
+                $namespace = rtrim($this->baseNamespace, "\\") . "\\" . $path;
+            } else {
+                $namespace = rtrim($this->baseNamespace, "\\");
+            }
             $namespace = rtrim($namespace, "\\");
-            $uses = $this->uses;
-            $serviceNamespace = "App\\Services\\" . str_replace("/", "\\", $path);
+            $serviceNamespace = $serviceBaseNamespace . str_replace("/", "\\", $path);
             $serviceNamespace = rtrim($serviceNamespace, "\\");
 
-            if (!preg_match("/Controller$/", $storePath)) {
-                $uses[] = "use App\Controller\BaseController";
+            foreach ($this->uses as $index => $use) {
+                $expUse = array_filter(explode("\\", $use));
+                $expBaseNamespace = array_filter(explode("\\", $this->baseNamespace));
+                if (count($expUse) == count($expBaseNamespace) + 1) {
+                    array_pop($expUse);
+                    if (implode("\\", $expUse) == implode("\\", $expBaseNamespace)) {
+                        unset($this->uses[$index]);
+                    }
+                }
             }
+
             $class = $controllerName;
             $inheritance = $this->inheritance;
             $serviceName = ucfirst(str_replace("Service", "", $name) . "Service");
-            $uses[] = "use {$serviceNamespace}\\{$serviceName}";
+            $this->uses[] = "{$serviceNamespace}\\{$serviceName}";
+            $this->uses = array_filter(array_unique($this->uses));
+            $uses = [];
+            foreach ($this->uses as $use) {
+                $uses[] = "use {$use}";
+            }
             $this->write($file, $this->content($namespace, $uses, $class, $inheritance, $serviceName));
-            $validateCmd = "php bin/hyperf.php validate:command name={$name} path={$path}";
+            $validateCmd = "php bin/hyperf.php dengpju:validate name={$name} path={$path}";
             $res = `$validateCmd`;
             $this->line($res, 'info');
-            $serviceCmd = "php bin/hyperf.php service:command name={$name} path={$path}";
+            $serviceCmd = "php bin/hyperf.php dengpju:service name={$name} path={$path}";
             $res = `$serviceCmd`;
             $this->line($res, 'info');
         }

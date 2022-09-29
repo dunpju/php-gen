@@ -79,15 +79,6 @@ class ServiceCommand extends BaseCommand
         if ($path) {
             $path = str_replace("path=", "", $path);
         }
-        if ($path) {
-            $storePath = $this->baseStorePath . $path;
-        } else {
-            $storePath = $this->baseStorePath;
-        }
-        if (!MkdirUtil::dir($storePath)) {
-            echo "Failed to create a directory." . PHP_EOL;
-            exit(1);
-        }
 
         $this->uses = config("gen.service.uses");
         $this->traits = config("gen.service.traits");
@@ -96,6 +87,16 @@ class ServiceCommand extends BaseCommand
         $this->validateBaseNamespace = config("gen.validate.base_namespace");
         $this->validateException = config("gen.service.validate_exception");
         $this->businessException = config("gen.service.business_exception");
+
+        if ($path) {
+            $storePath = rtrim($this->baseStorePath, "/") . "/" . $path;
+        } else {
+            $storePath = $this->baseStorePath;
+        }
+        if (!MkdirUtil::dir($storePath)) {
+            echo "Failed to create a directory." . PHP_EOL;
+            exit(1);
+        }
 
         $traits = [];
         foreach ($this->traits as $trait) {
@@ -124,7 +125,7 @@ class ServiceCommand extends BaseCommand
             $validateTrait = $this->validateBaseNamespace . str_replace("/", "\\", $path);
             $validateTrait = rtrim($validateTrait, "\\");
 
-            $this->uses = array_unique($this->uses);
+            $this->uses = array_filter(array_unique($this->uses));
             $uses = [];
             foreach ($this->uses as $use) {
                 $uses[] = "use {$use}";

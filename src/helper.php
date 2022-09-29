@@ -2,9 +2,10 @@
 declare(strict_types=1);
 
 use Dengpju\PhpGen\Traits\RuleMessage;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 
-! defined('BASE_PATH') && define('BASE_PATH', getcwd());
 
 if (!function_exists('validate')) {
     /**
@@ -19,5 +20,23 @@ if (!function_exists('validate')) {
             return (int)$validator->errors()->first();
         }
         return true;
+    }
+}
+
+if (!function_exists('input')) {
+    /**
+     * @param string $key
+     * @param null $default
+     * @return mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    function input(string $key, $default = null): mixed
+    {
+        $container = ApplicationContext::getContainer();
+        if (!$container->has(RequestInterface::class)) {
+            throw new \RuntimeException('RequestInterface is missing in container.');
+        }
+        return $container->get(RequestInterface::class)->input($key, $default);
     }
 }

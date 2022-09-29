@@ -24,16 +24,12 @@ class DaoCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        "use App\Constants\ResponseCode",
-        "use App\Dao\BaseDao",
-        "use App\Exception\DaoException"
-    ];
+    protected array $uses = [];
 
     /**
      * @var string
      */
-    protected string $inheritance = "BaseDao";
+    protected string $inheritance = "";
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -72,23 +68,29 @@ class DaoCommand extends BaseCommand
         $conn = str_replace("conn=", "", $conn);
         if (!in_array($conn, $conns)) {
             echo "Connection:{$conn} No Exist" . PHP_EOL;
-            exit();
+            exit(1);
         }
+
+        $this->uses = config("gen.dao.uses");
+        $this->inheritance = config("gen.dao.inheritance");
+        $this->baseStorePath = config("gen.dao.base_store_path");
+        $this->baseNamespace = config("gen.dao.base_namespace");
+
+        $this->combine();
+
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
-        $prefix = $connConfig['prefix'];
         $genModel = $commands['gen:model'];
-        $modelPath = $genModel['path'];
+        $modelPath = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));
         $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
-        $scanPath = BASE_PATH . "/{$modelPath}";
-        $basename = basename($scanPath);
 
-        $storePath = BASE_PATH . "/app/Dao/" . ucfirst(CamelizeUtil::camelize($conn));
+        $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
         if (!MkdirUtil::dir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
 
+        $scanPath = BASE_PATH . "/{$modelPath}";
         $phpfiles = glob($scanPath . "/*.php");
         foreach ($phpfiles as $php) {
             require_once($php);
@@ -102,10 +104,14 @@ class DaoCommand extends BaseCommand
             $fileName = $refClass->getShortName() . "Dao";
             $file = $storePath . "/{$fileName}.php";
             if (!file_exists($file)) {
-                $namespace = "App\\Dao\\" . basename(dirname($file));
-                $uses = $this->uses;
-                $uses[] = "use " . $refClass->getName();
-                $uses[] = "use " . str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                $this->uses[] = $refClass->getName();
+                $this->uses[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                $this->uses = array_filter(array_unique($this->uses));
+                $uses = [];
+                foreach ($this->uses as $use) {
+                    $uses[] = "use {$use}";
+                }
                 $class = $fileName;
                 $inheritance = $this->inheritance;
                 $model = $refClass->getShortName();
@@ -132,10 +138,14 @@ class DaoCommand extends BaseCommand
                     $fileName = $refClass->getShortName() . "Dao";
                     $file = $storePath . "/{$fileName}.php";
                     if (!file_exists($file)) {
-                        $namespace = "App\\Dao\\" . basename(dirname($file));
-                        $uses = $this->uses;
-                        $uses[] = "use " . $refClass->getName();
-                        $uses[] = "use " . str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                        $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                        $this->uses[] = $refClass->getName();
+                        $this->uses[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                        $this->uses = array_filter(array_unique($this->uses));
+                        $uses = [];
+                        foreach ($this->uses as $use) {
+                            $uses[] = "use {$use}";
+                        }
                         $class = $fileName;
                         $inheritance = $this->inheritance;
                         $model = $refClass->getShortName();

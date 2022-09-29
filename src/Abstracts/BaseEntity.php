@@ -2,20 +2,41 @@
 declare(strict_types=1);
 
 
-namespace Dengpju\PhpGen\Entity;
+namespace Dengpju\PhpGen\Abstracts;
 
 
 use Dengpju\PhpGen\Utils\HumpUtil;
 
 abstract class BaseEntity
 {
-    private bool $isEdit = false;
+    /**
+     * @var bool
+     */
+    protected bool $isEdit = false;
+    /**
+     * @var array
+     */
     protected array $flags = [];
+    /**
+     * @var array
+     */
     protected array $initFlags = [];
-
-    public null|string $createTime = null;
-    public null|string $updateTime = null;
-    public null|string $deleteTime = null;
+    /**
+     * @var string|null
+     */
+    public string|null $createTime = null;
+    /**
+     * @var string|null
+     */
+    public string|null $updateTime = null;
+    /**
+     * @var string|null
+     */
+    public string|null $deleteTime = null;
+    /**
+     * @var array
+     */
+    public array $batchData = [];
 
     const CREAT_TIME = 'createTime';
     const UPDATE_TIME = 'updateTime';
@@ -25,11 +46,10 @@ abstract class BaseEntity
         self::UPDATE_TIME,
         self::DELETE_TIME,
     ];
-    public array $batchData = [];
 
     /**
      * BaseEntity constructor.
-     * @param bool $isEdit 是否为编辑
+     * @param bool $isEdit
      * @throws \ReflectionException
      */
     public function __construct(bool $isEdit = false)
@@ -85,7 +105,6 @@ abstract class BaseEntity
     }
 
     /**
-     * 映射属性值
      * @param array $propertys
      */
     public function mapper(array $propertys)

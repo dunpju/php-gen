@@ -2,16 +2,15 @@
 declare(strict_types=1);
 
 
-namespace Dengpju\PhpGen\Enum;
+namespace Dengpju\PhpGen\Abstracts;
 
 
 use Dengpju\PhpGen\Annotations\Message;
 use Dengpju\PhpGen\Exception\EnumException;
 
-abstract class EnumBase
+abstract class BaseEnum
 {
     /**
-     * 检测值是否在枚举类中
      * @param null $value
      * @param bool $strict
      * @return null

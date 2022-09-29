@@ -19,15 +19,6 @@ use Symfony\Component\Console\Input\InputArgument;
 #[Command]
 class EntityCommand extends BaseCommand
 {
-    /**
-     * @var array|string[]
-     */
-    protected array $uses = [];
-    /**
-     * @var string
-     */
-    protected string $inheritance = "";
-
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('dengpju:entity');
@@ -73,18 +64,13 @@ class EntityCommand extends BaseCommand
         $this->baseStorePath = config("gen.entity.base_store_path");
         $this->baseNamespace = config("gen.entity.base_namespace");
 
-        if (str_contains($this->inheritance, "\\")) {
-            $this->uses[] = $this->inheritance;
-            $this->uses = array_unique($this->uses);
-            $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
-        }
+        $this->combine();
 
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
         $genModel = $commands['gen:model'];
-        $modelPath = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));;
+        $modelPath = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));
         $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
-        $scanPath = BASE_PATH . "/{$modelPath}";
 
         $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
         if (!MkdirUtil::dir($storePath)) {
@@ -92,6 +78,7 @@ class EntityCommand extends BaseCommand
             exit(1);
         }
 
+        $scanPath = BASE_PATH . "/{$modelPath}";
         $phpfiles = glob($scanPath . "/*.php");
         foreach ($phpfiles as $php) {
             require_once($php);
@@ -106,6 +93,7 @@ class EntityCommand extends BaseCommand
             $file = $storePath . "/{$fileName}.php";
             if (!file_exists($file)) {
                 $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                $this->uses = array_filter(array_unique($this->uses));
                 $uses = [];
                 foreach ($this->uses as $use) {
                     $uses[] = "use {$use}";
@@ -127,6 +115,7 @@ class EntityCommand extends BaseCommand
                     $file = $storePath . "/{$fileName}.php";
                     if (!file_exists($file)) {
                         $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                        $this->uses = array_filter(array_unique($this->uses));
                         $uses = [];
                         foreach ($this->uses as $use) {
                             $uses[] = "use {$use}";

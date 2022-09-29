@@ -57,8 +57,13 @@ class ValidateCommand extends BaseCommand
         if ($path) {
             $path = str_replace("path=", "", $path);
         }
+
+        $this->uses = config("gen.validate.uses");
+        $this->baseStorePath = config("gen.validate.base_store_path");
+        $this->baseNamespace = config("gen.validate.base_namespace");
+
         if ($path) {
-            $storePath = $this->baseStorePath . $path;
+            $storePath = rtrim($this->baseStorePath, "/") . "/" . $path;
         } else {
             $storePath = $this->baseStorePath;
         }
@@ -67,15 +72,12 @@ class ValidateCommand extends BaseCommand
             exit(1);
         }
 
-        $this->uses = config("gen.validate.uses");
-        $this->baseStorePath = config("gen.validate.base_store_path");
-        $this->baseNamespace = config("gen.validate.base_namespace");
-
         $validateName = ucfirst(str_replace("Validate", "", $name) . "Validate");
         $file = $storePath . "/{$validateName}.php";
         if (!file_exists($file)) {
             $namespace = $this->baseNamespace . str_replace("/", "\\", $path);
             $namespace = rtrim($namespace, "\\");
+            $this->uses = array_filter(array_unique($this->uses));
             $uses = [];
             foreach ($this->uses as $use) {
                 $uses[] = "use {$use}";

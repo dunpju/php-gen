@@ -8,7 +8,14 @@ use Hyperf\Command\Command as HyperfCommand;
 abstract class BaseCommand extends HyperfCommand
 {
     use SaveFile;
-
+    /**
+     * @var array|string[]
+     */
+    protected array $uses = [];
+    /**
+     * @var string
+     */
+    protected string $inheritance = "";
     /**
      * @var string
      */
@@ -17,6 +24,14 @@ abstract class BaseCommand extends HyperfCommand
      * @var string
      */
     protected string $baseNamespace;
+
+    protected function combine() {
+        if (str_contains($this->inheritance, "\\")) {
+            $this->uses[] = $this->inheritance;
+            $this->uses = array_unique($this->uses);
+            $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
+        }
+    }
 
     /**
      * @param string $classDoc
