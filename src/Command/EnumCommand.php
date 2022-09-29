@@ -86,7 +86,7 @@ class EnumCommand extends BaseCommand
         $file = $storePath . "/{$fileName}.php";
 
         if (!file_exists($file)) {
-            $namespace = $this->baseNamespace . basename(dirname($file));
+            $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
             $uses = [];
             foreach ($this->uses as $use) {
                 $uses[] = "use {$use}";

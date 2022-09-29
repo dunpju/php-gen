@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Command;
 
+use Dengpju\PhpGen\Utils\CamelizeUtil;
 use Dengpju\PhpGen\Utils\MkdirUtil;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
@@ -61,7 +62,7 @@ class ModelCommand extends BaseCommand
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
         $genModel = $commands['gen:model'];
-        $path = $genModel['path'];
+        $path = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));
         if (!MkdirUtil::dir(BASE_PATH . "/{$path}")) {
             echo "Failed to create a directory." . PHP_EOL;
             exit(1);

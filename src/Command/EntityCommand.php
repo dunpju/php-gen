@@ -22,15 +22,11 @@ class EntityCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        "use App\\Annotations\\Message",
-        "use App\\Entity\\BaseEntity",
-    ];
-
+    protected array $uses = [];
     /**
      * @var string
      */
-    protected string $inheritance = "BaseEntity";
+    protected string $inheritance = "";
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -69,21 +65,31 @@ class EntityCommand extends BaseCommand
         $conn = str_replace("conn=", "", $conn);
         if (!in_array($conn, $conns)) {
             echo "Connection:{$conn} No Exist" . PHP_EOL;
-            exit();
+            exit(1);
         }
+
+        $this->uses = config("gen.entity.uses");
+        $this->inheritance = config("gen.entity.inheritance");
+        $this->baseStorePath = config("gen.entity.base_store_path");
+        $this->baseNamespace = config("gen.entity.base_namespace");
+
+        if (str_contains($this->inheritance, "\\")) {
+            $this->uses[] = $this->inheritance;
+            $this->uses = array_unique($this->uses);
+            $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
+        }
+
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
-        $prefix = $connConfig['prefix'];
         $genModel = $commands['gen:model'];
-        $modelPath = $genModel['path'];
+        $modelPath = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));;
         $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
         $scanPath = BASE_PATH . "/{$modelPath}";
-        $basename = basename($scanPath);
 
-        $storePath = BASE_PATH . "/app/Entity/" . ucfirst(CamelizeUtil::camelize($conn));
+        $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
         if (!MkdirUtil::dir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
 
         $phpfiles = glob($scanPath . "/*.php");
@@ -99,8 +105,11 @@ class EntityCommand extends BaseCommand
             $fileName = $refClass->getShortName() . "Entity";
             $file = $storePath . "/{$fileName}.php";
             if (!file_exists($file)) {
-                $namespace = "App\\Entity\\" . basename(dirname($file));
-                $uses = $this->uses;
+                $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                $uses = [];
+                foreach ($this->uses as $use) {
+                    $uses[] = "use {$use}";
+                }
                 $class = $fileName;
                 $inheritance = $this->inheritance;
                 $propertys = $this->propertys($attributes);
@@ -117,8 +126,11 @@ class EntityCommand extends BaseCommand
                     $fileName = $refClass->getShortName() . "Entity";
                     $file = $storePath . "/{$fileName}.php";
                     if (!file_exists($file)) {
-                        $namespace = "App\\Entity\\" . basename(dirname($file));
-                        $uses = $this->uses;
+                        $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
+                        $uses = [];
+                        foreach ($this->uses as $use) {
+                            $uses[] = "use {$use}";
+                        }
                         $class = $fileName;
                         $inheritance = $this->inheritance;
                         $propertys = $this->propertys($attributes);

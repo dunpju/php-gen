@@ -3,6 +3,17 @@ declare(strict_types=1);
 
 
 return [
+    "entity" => [
+        "uses" => [
+            Dengpju\PhpGen\Annotations\Message::class,
+            Dengpju\PhpGen\Entity\BaseEntity::class
+        ],
+        "inheritance" => Dengpju\PhpGen\Entity\BaseEntity::class,
+        // 基础存储路径
+        "base_store_path" => BASE_PATH . "/app/Entity",
+        // 基础命名空间
+        "base_namespace" => "App\\Entity\\",
+    ],
     "enum" => [
         "uses" => [
             Dengpju\PhpGen\Annotations\Message::class,
