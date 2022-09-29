@@ -10,6 +10,15 @@ abstract class BaseCommand extends HyperfCommand
     use SaveFile;
 
     /**
+     * @var string
+     */
+    protected string $baseStorePath;
+    /**
+     * @var string
+     */
+    protected string $baseNamespace;
+
+    /**
      * @param string $classDoc
      * @return array
      */

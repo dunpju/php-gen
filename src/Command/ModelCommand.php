@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * php bin/hyperf.php model:command conn=default table=all
+ * php bin/hyperf.php dengpju:model conn=default table=all
  * Class ModelCommand
  * @package App\Command
  */
@@ -28,7 +28,7 @@ class ModelCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Model.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php model:command conn=default table=all Or php bin/hyperf.php model:command conn=default table=TableName');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:model conn=default table=all Or php bin/hyperf.php dengpju:model conn=default table=TableName');
         $this->addOption('conn', 'c', InputOption::VALUE_REQUIRED, 'Data connection');
         $this->addOption('table', 't', InputOption::VALUE_REQUIRED, 'Table Name,all Generate Full Table Model');
     }

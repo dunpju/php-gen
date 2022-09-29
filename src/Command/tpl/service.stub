@@ -17,7 +17,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->listValidate())) {
-            throw new ValidateException($code);
+            throw new %VALIDATE_EXCEPTION%($code);
         }
     }
 
@@ -28,7 +28,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->addValidate())) {
-            throw new ValidateException($code);
+            throw new %VALIDATE_EXCEPTION%($code);
         }
 
         // 数据入库
@@ -39,7 +39,7 @@ class %CLASS%
             Db::commit();
         } catch (\Throwable $e) {
             Db::rollBack();
-            throw new BusinessException($e->getMessage());
+            throw new %BUSINESS_EXCEPTION%($e->getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->editValidate())) {
-            throw new ValidateException($code);
+            throw new %VALIDATE_EXCEPTION%($code);
         }
 
         // 数据入库
@@ -61,7 +61,7 @@ class %CLASS%
             Db::commit();
         } catch (\Throwable $e) {
             Db::rollBack();
-            throw new BusinessException($e->getMessage());
+            throw new %BUSINESS_EXCEPTION%($e->getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->detailsValidate())) {
-            throw new ValidateException($code);
+            throw new %VALIDATE_EXCEPTION%($code);
         }
     }
 
@@ -83,7 +83,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->deleteValidate())) {
-            throw new ValidateException($code);
+            throw new %VALIDATE_EXCEPTION%($code);
         }
 
         // 数据入库
@@ -94,7 +94,7 @@ class %CLASS%
             Db::commit();
         } catch (\Throwable $e) {
             Db::rollBack();
-            throw new BusinessException($e->getMessage());
+            throw new %BUSINESS_EXCEPTION%($e->getMessage());
         }
     }
 }

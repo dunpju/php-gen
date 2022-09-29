@@ -11,8 +11,8 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * php bin/hyperf.php entity:command conn=default model=all
- * php bin/hyperf.php entity:command conn=default model=Address
+ * php bin/hyperf.php dengpju:entity conn=default model=all
+ * php bin/hyperf.php dengpju:entity conn=default model=Address
  * Class EntityCommand
  * @package App\Command
  */
@@ -41,7 +41,7 @@ class EntityCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Entity.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . "php bin/hyperf.php entity:command conn=default model=all Or php bin/hyperf.php entity:command conn=default model=ModelName");
+        $this->setDescription($description . "php bin/hyperf.php dengpju:entity conn=default model=all Or php bin/hyperf.php dengpju:entity conn=default model=ModelName");
     }
 
     /**

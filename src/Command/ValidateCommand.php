@@ -10,7 +10,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * php bin/hyperf.php validate:command name=name path=path
+ * php bin/hyperf.php dengpju:validate name=name path=path
  * Class ValidateCommand
  * @package App\Command
  */
@@ -20,20 +20,12 @@ class ValidateCommand extends BaseCommand
     /**
      * @var array|string[]
      */
-    protected array $uses = [
-        "use App\Constants\ResponseCode",
-        "use App\Traits\RuleMessage"
-    ];
+    protected array $uses = [];
 
     /**
-     * @var string
+     * ValidateCommand constructor.
+     * @param ContainerInterface $container
      */
-    protected string $baseStorePath;
-    /**
-     * @var string
-     */
-    protected string $baseNamespace;
-
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('dengpju:validate');
@@ -43,7 +35,7 @@ class ValidateCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Validate.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php validate:command name=name path=path');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:validate name=name path=path');
     }
 
     /**
@@ -53,13 +45,13 @@ class ValidateCommand extends BaseCommand
     {
         return [
             ['name', InputArgument::REQUIRED, 'Validate Trait Name'],
-            ['path', InputArgument::OPTIONAL, 'Relative Validates Directory'],
+            ['path', InputArgument::OPTIONAL, 'Relative Base Store Path Directory'],
         ];
     }
 
     public function handle()
     {
-        $this->uses = config("gen.validate.uses");
+        $this->uses = array_merge($this->uses, config("gen.validate.uses"));
         $this->baseStorePath = config("gen.validate.base_store_path");
         $this->baseNamespace = config("gen.validate.base_namespace");
 
@@ -76,7 +68,7 @@ class ValidateCommand extends BaseCommand
         }
         if (!MkdirUtil::dir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
-            exit();
+            exit(1);
         }
         $validateName = ucfirst(str_replace("Validate", "", $name) . "Validate");
         $file = $storePath . "/{$validateName}.php";
@@ -97,8 +89,7 @@ class ValidateCommand extends BaseCommand
     /**
      * @param string $namespace
      * @param array $uses
-     * @param string $class
-     * @param array $traits
+     * @param string $trait
      * @return string
      */
     protected function content(string $namespace, array $uses, string $trait): string

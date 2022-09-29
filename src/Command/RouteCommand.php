@@ -11,7 +11,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * php bin/hyperf.php route:command server=http
+ * php bin/hyperf.php dengpju:route server=http
  * Class RouteCommand
  * @package App\Command
  */
@@ -27,7 +27,7 @@ class RouteCommand extends HyperfCommand
     {
         parent::configure();
         $description = str_pad("Look Route List.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php route:command server=http');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:route server=http');
     }
 
     /**

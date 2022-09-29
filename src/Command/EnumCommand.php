@@ -11,7 +11,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * php bin/hyperf.php enum:command conn=default name=yes_or_no flag='是否:no-1-否,yes-2-是'
+ * php bin/hyperf.php dengpju:enum conn=default name=yes_or_no flag='是否:no-1-否,yes-2-是'
  * Class EnumCommand
  * @package App\Command
  */
@@ -40,7 +40,7 @@ class EnumCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Enum.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . "php bin/hyperf.php enum:command conn=default name=yes_or_no flag='是否:yes-1-是,no-2-否'");
+        $this->setDescription($description . "php bin/hyperf.php dengpju:enum conn=default name=yes_or_no flag='是否:yes-1-是,no-2-否'");
     }
 
     /**

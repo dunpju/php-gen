@@ -12,7 +12,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * php bin/hyperf.php dao:command conn=default model=all
+ * php bin/hyperf.php dengpju:dao conn=default model=all
  * Class DaoCommand
  * @package App\Command
  */
@@ -44,7 +44,7 @@ class DaoCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Dao.", 20, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php dao:command conn=default model=all Or php bin/hyperf.php dao:command conn=default model=ModelName');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:dao conn=default model=all Or php bin/hyperf.php dengpju:dao conn=default model=ModelName');
     }
 
     /**
