@@ -2,7 +2,7 @@
 基于hyperf封装的devtool组件，支持构建Controller、Dao、Entity、Model、Enum、Service、Validate代码，查看Route列表
 
 #### 安装
-composer require dengpju/php-gen
+composer require-dev dengpju/php-gen
 
 #### 使用
 
