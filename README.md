@@ -9,6 +9,8 @@ composer require dengpju/php-gen
 ###### 生成[project_name]\config\autoload\gen.php配置
 php bin/hyperf.php vendor:publish dengpju/php-gen
 
+
+###### 查看指令
 php bin/hyperf.php 
 
 dengpju
