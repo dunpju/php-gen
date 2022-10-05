@@ -34,6 +34,24 @@ class ConfigProvider
                     'source' => __DIR__ . '/../publish/gen.php',
                     'destination' => BASE_PATH . '/config/autoload/gen.php',
                 ],
+                [
+                    'id' => 'watcher_config',
+                    'description' => 'php gen config',
+                    'source' => __DIR__ . '/../publish/watcher_config.php',
+                    'destination' => BASE_PATH . '/config/autoload/watcher.php',
+                ],
+                [
+                    'id' => 'watch',
+                    'description' => 'watch',
+                    'source' => __DIR__ . '/../publish/watch',
+                    'destination' => BASE_PATH . '/watch',
+                ],
+                [
+                    'id' => 'watcher',
+                    'description' => 'watcher',
+                    'source' => __DIR__ . '/../publish/watcher.php',
+                    'destination' => BASE_PATH . '/watcher.php',
+                ],
             ],
         ];
     }

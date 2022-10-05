@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+!defined('BASE_PATH') && define('BASE_PATH', __DIR__);
+
+$bootPid = `ps -ef |grep 'myboot' |grep -v grep |awk '{print $1}'`;
+if ($bootPid) {
+    $bootPid = str_replace(PHP_EOL, "", $bootPid);
+    Swoole\Process::kill((int)$bootPid, SIGTERM);
+}
+
+cli_set_process_title("myboot");
+
+function bootWatcher() {
+    $bootProcess = new Swoole\Process(function (Swoole\Process $process) {
+        $process->exec("/usr/bin/env", ["php", "watcher.php"]);
+    });
+    $bootProcess->start();
+}
+
+function sigint()
+{
+    $pid = getmypid();
+    Swoole\Process::kill($pid, SIGTERM);
+}
+
+pcntl_signal(SIGINT, 'sigint');
+
+while (true){
+    pcntl_signal_dispatch();
+    $watcherPid = `ps -ef |grep 'mywatcher' |grep -v grep |awk '{print $1}'`;
+    if (!$watcherPid) {
+        bootWatcher();
+    }
+    sleep(5);
+}
