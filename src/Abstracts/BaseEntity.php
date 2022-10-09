@@ -24,15 +24,15 @@ abstract class BaseEntity
     /**
      * @var string|null
      */
-    public string|null $createTime = null;
+    public $createTime = null;
     /**
      * @var string|null
      */
-    public string|null $updateTime = null;
+    public $updateTime = null;
     /**
      * @var string|null
      */
-    public string|null $deleteTime = null;
+    public $deleteTime = null;
     /**
      * @var array
      */
