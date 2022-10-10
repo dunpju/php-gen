@@ -36,7 +36,7 @@ class ConfigProvider
                 ],
                 [
                     'id' => 'watcher_config',
-                    'description' => 'php gen config',
+                    'description' => 'watcher config',
                     'source' => __DIR__ . '/../publish/watcher_config.php',
                     'destination' => BASE_PATH . '/config/autoload/watcher.php',
                 ],

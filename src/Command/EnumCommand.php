@@ -53,6 +53,8 @@ class EnumCommand extends BaseCommand
 
     public function handle()
     {
+        $this->autoPublish();
+
         $conn = trim($this->input->getArgument('conn'));
         $name = trim($this->input->getArgument('name'));
         $flag = trim($this->input->getArgument('flag'));

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
  * @package App\Command
  */
 #[Command]
-class RouteCommand extends HyperfCommand
+class RouteCommand extends BaseCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
@@ -42,6 +42,8 @@ class RouteCommand extends HyperfCommand
 
     public function handle()
     {
+        $this->autoPublish();
+
         $server = $this->input->getArgument('server');
         $server = str_replace("server=", "", $server);
         $routers = make(DispatcherFactory::class)->getRouter($server);

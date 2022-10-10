@@ -47,6 +47,8 @@ class ModelCommand extends BaseCommand
 
     public function handle()
     {
+        $this->autoPublish();
+
         $inputTableName = $this->input->getArgument('table');
         $conn = $this->input->getArgument('conn') ?? 'default';
         $inputTableName = str_replace("table=", "", $inputTableName);

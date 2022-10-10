@@ -73,6 +73,8 @@ class ServiceCommand extends BaseCommand
 
     public function handle()
     {
+        $this->autoPublish();
+
         $name = $this->input->getArgument('name');
         $path = (string)$this->input->getArgument('path');
         $name = str_replace("name=", "", $name);

@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Command;
 
+use Dengpju\PhpGen\ConfigProvider;
 use Hyperf\Command\Command as HyperfCommand;
 
 abstract class BaseCommand extends HyperfCommand
 {
     use SaveFile;
+
     /**
      * @var array|string[]
      */
@@ -25,7 +27,29 @@ abstract class BaseCommand extends HyperfCommand
      */
     protected string $baseNamespace;
 
-    protected function combine() {
+    protected function autoPublish()
+    {
+        $ConfigProvider = new ConfigProvider();
+        $provider = $ConfigProvider();
+        $publishes = $provider["publish"];
+        $isPublish = true;
+        foreach ($publishes as $publish) {
+            if (!file_exists($publish["destination"])) {
+                $isPublish = false;
+            }
+        }
+        if (!$isPublish) {
+            $composer = file_get_contents(dirname(__DIR__, 2) . "/composer.json");
+            $stdClass = json_decode($composer);
+            $res = `php bin/hyperf.php vendor:publish {$stdClass->name}`;
+            echo $res;
+            $this->error('Please re-execute the command');
+            exit(1);
+        }
+    }
+
+    protected function combine()
+    {
         if (str_contains($this->inheritance, "\\")) {
             $this->uses[] = $this->inheritance;
             $this->uses = array_unique($this->uses);

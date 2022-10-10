@@ -59,6 +59,8 @@ class DaoCommand extends BaseCommand
      */
     public function handle()
     {
+        $this->autoPublish();
+
         $conn = $this->input->getArgument('conn');
         $inputModelName = $this->input->getArgument('model');
         $inputModelName = str_replace("model=", "", $inputModelName);
