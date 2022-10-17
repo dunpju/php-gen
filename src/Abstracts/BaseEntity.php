@@ -148,13 +148,15 @@ abstract class BaseEntity
     {
         $refClass = new \ReflectionClass($this);
         $classDoc = $refClass->getDocComment();
-        preg_match_all('/(?:(\@property\s+bool\s+[(\$flag)|(flag)])).*?(?=(' . PHP_EOL . '))/', $classDoc, $doc);
-        if ($doc[0]) {
-            $doc = json_decode(str_replace("\\r", '', json_encode($doc[0])));
-            foreach ($doc as $key => $flag) {
-                $flag = preg_replace("/\@property\s+bool\s+/", "", $flag);
-                $flag = preg_replace("/[\x{4e00}-\x{9fa5}\s+\$+]+/u", "", $flag);
-                $this->initFlags[trim(trim($flag, PHP_EOL . "'"), "'")] = false;
+        if (is_string($classDoc)) {
+            preg_match_all('/(?:(\@property\s+bool\s+[(\$flag)|(flag)])).*?(?=(' . PHP_EOL . '))/', $classDoc, $doc);
+            if ($doc[0]) {
+                $doc = json_decode(str_replace("\\r", '', json_encode($doc[0])));
+                foreach ($doc as $key => $flag) {
+                    $flag = preg_replace("/\@property\s+bool\s+/", "", $flag);
+                    $flag = preg_replace("/[\x{4e00}-\x{9fa5}\s+\$+]+/u", "", $flag);
+                    $this->initFlags[trim(trim($flag, PHP_EOL . "'"), "'")] = false;
+                }
             }
         }
     }
@@ -166,12 +168,11 @@ abstract class BaseEntity
     private function instanceEntity()
     {
         $refThis = new \ReflectionClass($this);
-        foreach ($this as $property => $value) {
-            if (preg_match("/Entity$/", $property)) {
-                if ($refThis->getName() !== $refThis->getNamespaceName() . "\\" . $property) {
-                    $refClass = new \ReflectionClass($refThis->getNamespaceName() . "\\" . $property);
-                    $this->{$property} = $refClass->newInstance();
-                }
+        foreach ($refThis->getProperties() as $property) {
+            $propertyType = sprintf("%s", $property->getType());
+            if (class_exists($propertyType)) {
+                $refClass = new \ReflectionClass($propertyType);
+                $this->{$property->getName()} = $refClass->newInstance();
             }
         }
     }
