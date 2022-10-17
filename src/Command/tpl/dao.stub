@@ -13,9 +13,9 @@ namespace %NAMESPACE%;
 class %CLASS% extends %INHERITANCE%
 {
     /**
-     * @var %MODEL%
+     * @var %MODEL%|null
      */
-    public $model;
+    public ?%MODEL% $model;
 
     /**
      * %CLASS% constructor.
@@ -71,9 +71,9 @@ class %CLASS% extends %INHERITANCE%
     /**
      * @param int $%PRIMARY_KEY%
      * @param array|string[] $fields
-     * @return %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|null
+     * @return %MODEL%|null
      */
-    public function getBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%, array $fields = ["*"]): %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|null
+    public function getBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%, array $fields = ["*"]): ?%MODEL%
     {
         return $this->model::query()->select($fields)->where($this->primaryKey, $%PRIMARY_KEY%)->first();
     }
@@ -81,9 +81,9 @@ class %CLASS% extends %INHERITANCE%
     /**
      * @param array $%PRIMARY_KEY%s
      * @param array|string[] $fields
-     * @return %MODEL%[]|\Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection|\Hyperf\Database\Query\Builder[]|\Hyperf\Utils\Collection
+     * @return \Hyperf\Database\Model\Collection|array|\Hyperf\Utils\Collection
      */
-    public function getBy%UC_PRIMARY_KEY%s(array $%PRIMARY_KEY%s, array $fields = ["*"])
+    public function getBy%UC_PRIMARY_KEY%s(array $%PRIMARY_KEY%s, array $fields = ["*"]): \Hyperf\Database\Model\Collection|array|\Hyperf\Utils\Collection
     {
         return $this->model::query()->select($fields)->whereIn($this->primaryKey, $%PRIMARY_KEY%s)->get();
     }
@@ -94,7 +94,9 @@ class %CLASS% extends %INHERITANCE%
      */
     public function deleteBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%): bool|int
     {
-        return $this->model::where($this->primaryKey, $%PRIMARY_KEY%)->delete();
+        //TODO::为了安全自行决定是否使用
+        //return $this->model::where($this->primaryKey, $%PRIMARY_KEY%)->delete();
+        return false;
     }
 
     /**
