@@ -42,17 +42,21 @@ abstract class BaseDao
 
     /**
      * @param int $page
+     * @return static
      */
-    public function setPage(int $page)
+    public function setPage(int $page): static
     {
         $this->page = $page;
+        return $this;
     }
 
     /**
      * @param int $perPage
+     * @return static
      */
-    public function setPerPage(int $perPage)
+    public function setPerPage(int $perPage): static
     {
         $this->perPage = $perPage;
+        return $this;
     }
 }
