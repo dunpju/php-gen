@@ -47,4 +47,12 @@ abstract class BaseDao
     {
         $this->page = $page;
     }
+
+    /**
+     * @param int $perPage
+     */
+    public function setPerPage(int $perPage)
+    {
+        $this->perPage = $perPage;
+    }
 }
