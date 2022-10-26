@@ -17,6 +17,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->listValidate())) {
+            // TODO::请更换校验异常类
             throw new %VALIDATE_EXCEPTION%($code);
         }
     }
@@ -28,6 +29,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->addValidate())) {
+            // TODO::请更换校验异常类
             throw new %VALIDATE_EXCEPTION%($code);
         }
 
@@ -50,6 +52,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->editValidate())) {
+            // TODO::请更换校验异常类
             throw new %VALIDATE_EXCEPTION%($code);
         }
 
@@ -72,6 +75,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->detailsValidate())) {
+            // TODO::请更换校验异常类
             throw new %VALIDATE_EXCEPTION%($code);
         }
     }
@@ -83,6 +87,7 @@ class %CLASS%
     {
         // 校验
         if (true !== $code = validate($params, $this->deleteValidate())) {
+            // TODO::请更换校验异常类
             throw new %VALIDATE_EXCEPTION%($code);
         }
 
