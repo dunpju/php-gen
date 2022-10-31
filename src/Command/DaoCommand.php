@@ -142,7 +142,7 @@ class DaoCommand extends BaseCommand
                     $file = $storePath . "/{$fileName}.php";
                     if (!file_exists($file)) {
                         $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
-                        $usesTmp[] = $this->uses;
+                        $usesTmp = $this->uses;
                         $usesTmp[] = $refClass->getName();
                         $usesTmp[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
                         $usesTmp = array_filter(array_unique($usesTmp));
