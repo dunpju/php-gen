@@ -107,11 +107,12 @@ class DaoCommand extends BaseCommand
             $file = $storePath . "/{$fileName}.php";
             if (!file_exists($file)) {
                 $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
-                $this->uses[] = $refClass->getName();
-                $this->uses[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
-                $this->uses = array_filter(array_unique($this->uses));
+                $usesTmp = $this->uses;
+                $usesTmp[] = $refClass->getName();
+                $usesTmp[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                $usesTmp = array_filter(array_unique($usesTmp));
                 $uses = [];
-                foreach ($this->uses as $use) {
+                foreach ($usesTmp as $use) {
                     $uses[] = "use {$use}";
                 }
                 $class = $fileName;
@@ -141,11 +142,12 @@ class DaoCommand extends BaseCommand
                     $file = $storePath . "/{$fileName}.php";
                     if (!file_exists($file)) {
                         $namespace = rtrim($this->baseNamespace, "\\") . "\\" . basename(dirname($file));
-                        $this->uses[] = $refClass->getName();
-                        $this->uses[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
-                        $this->uses = array_filter(array_unique($this->uses));
+                        $usesTmp[] = $this->uses;
+                        $usesTmp[] = $refClass->getName();
+                        $usesTmp[] = str_replace("\\Model\\", "\\Entity\\", $refClass->getName()) . "Entity";
+                        $usesTmp = array_filter(array_unique($usesTmp));
                         $uses = [];
-                        foreach ($this->uses as $use) {
+                        foreach ($usesTmp as $use) {
                             $uses[] = "use {$use}";
                         }
                         $class = $fileName;
