@@ -70,6 +70,7 @@ class ControllerCommand extends BaseCommand
             $path = str_replace("path=", "", $path);
         }
         if ($path) {
+            $path = str_replace("\\", "/", $path);
             $storePath = rtrim($this->baseStorePath, "/") . "/" . $path;
         } else {
             $storePath = $this->baseStorePath;
@@ -87,6 +88,7 @@ class ControllerCommand extends BaseCommand
                 $namespace = rtrim($this->baseNamespace, "\\");
             }
             $namespace = rtrim($namespace, "\\");
+            $namespace = str_replace("/", "\\", $namespace);
             $serviceNamespace = $serviceBaseNamespace . str_replace("/", "\\", $path);
             $serviceNamespace = rtrim($serviceNamespace, "\\");
 
