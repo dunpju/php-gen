@@ -61,6 +61,8 @@ class ModelCommand extends BaseCommand
             exit(1);
         }
 
+        $connAllPrefix = array_unique(array_column($databases, "prefix"));
+
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
         $genModel = $commands['gen:model'];
@@ -77,7 +79,18 @@ class ModelCommand extends BaseCommand
         $prefix = $connConfig['prefix'];
 
         if ($inputTableName == "all") {
-            $tables = DB::connection($conn)->select('show tables');
+            if (!$prefix) {
+                $q = "show tables WHERE";
+                $connAllPrefix = array_filter($connAllPrefix);
+                $wq = [];
+                foreach ($connAllPrefix as $pre) {
+                    $wq[] = " Tables_in_{$database} NOT LIKE '{$pre}%'";
+                }
+                $q .= implode(" AND ", $wq);
+            } else {
+                $q = "show tables WHERE Tables_in_{$database} LIKE '{$prefix}%'";
+            }
+            $tables = DB::connection($conn)->select($q);
         } else {
             $stdClass = new \stdClass();
             $stdClass->{"Tables_in_{$database}"} = $inputTableName;
@@ -85,10 +98,11 @@ class ModelCommand extends BaseCommand
                 $stdClass
             ];
         }
+
         $command = 'gen:model';
         foreach ($tables as $table) {
             $tableName = $table->{"Tables_in_{$database}"};
-            if (!preg_match("/\d+/", $tableName)) {
+            if (!preg_match("/\d+$/", $tableName)) {
                 $cmd = "php bin/hyperf.php {$command} {$tableName} --pool='{$conn}' --path='{$path}' --inheritance={$inheritance} --with-comments";
                 if ($uses) {
                     $cmd .= " --uses='{$uses}'";
