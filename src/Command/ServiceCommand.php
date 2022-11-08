@@ -177,19 +177,6 @@ class ServiceCommand extends BaseCommand
 
     /**
      * @param string $tpl
-     * @param string $trait
-     */
-    protected function replaceTrait(string &$tpl, string $trait)
-    {
-        $tpl = str_replace(
-            ['%TRAIT%'],
-            [$trait],
-            $tpl
-        );
-    }
-
-    /**
-     * @param string $tpl
      * @param string $validateException
      */
     protected function replaceValidateException(string &$tpl, string $validateException)

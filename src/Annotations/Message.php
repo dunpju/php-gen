@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
 #[Attribute(Attribute::TARGET_ALL)]
 class Message
 {
-    public function __construct(string $message="")
+    public function __construct(public string $text="")
     {
     }
 

@@ -74,8 +74,8 @@ class RouteCommand extends BaseCommand
 
         ksort($routerCollector);
         foreach ($routerCollector as $item) {
-            $method = str_pad($item[0], 7, " ", STR_PAD_RIGHT);
-            $route = str_pad($item[1], 32, " ", STR_PAD_RIGHT);
+            $method = str_pad($item[0], 7, " ", STR_PAD_RIGHT)." ";
+            $route = str_pad($item[1], 32, " ", STR_PAD_RIGHT)." ";
             $handle = str_pad($item[2], 50, " ", STR_PAD_RIGHT);
             $middleware = $item[3];
             $this->line("{$method}{$route}{$handle}{$middleware}", 'info');

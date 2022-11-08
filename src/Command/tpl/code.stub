@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+
+namespace %NAMESPACE%;
+
+%USES%
+
+/**
+ * Class %CLASS%
+ * @package %NAMESPACE%
+ */
+#[Constants]
+class %CLASS% extends %INHERITANCE%
+{
+    %TRAIT%
+
+    %CONST%
+
+}

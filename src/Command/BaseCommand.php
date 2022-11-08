@@ -19,6 +19,10 @@ abstract class BaseCommand extends HyperfCommand
      */
     protected string $inheritance = "";
     /**
+     * @var array
+     */
+    protected array $traits = [];
+    /**
      * @var string
      */
     protected string $baseStorePath;
@@ -54,6 +58,20 @@ abstract class BaseCommand extends HyperfCommand
             $this->uses[] = $this->inheritance;
             $this->uses = array_unique($this->uses);
             $this->inheritance = basename(str_replace("\\", "/", $this->inheritance));
+        }
+        if ($this->traits) {
+            $this->traits = array_filter(array_unique($this->traits));
+            $traits = [];
+            foreach ($this->traits as $trait) {
+                if (str_contains($trait, "\\")) {
+                    $this->uses[] = $trait;
+                    $this->uses = array_unique($this->uses);
+                    $traits[] = basename(str_replace("\\", "/", $trait));
+                } else {
+                    $traits[] = $trait;
+                }
+            }
+            $this->traits = $traits;
         }
     }
 
@@ -127,6 +145,19 @@ abstract class BaseCommand extends HyperfCommand
         $tpl = str_replace(
             ['%INHERITANCE%'],
             [$inheritance],
+            $tpl
+        );
+    }
+
+    /**
+     * @param string $tpl
+     * @param string $trait
+     */
+    protected function replaceTrait(string &$tpl, string $trait)
+    {
+        $tpl = str_replace(
+            ['%TRAIT%'],
+            [$trait],
             $tpl
         );
     }
