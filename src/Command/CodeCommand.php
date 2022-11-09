@@ -34,6 +34,7 @@ class CodeCommand extends BaseCommand
         $description = str_pad("Build Code.", 20, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:code');
         $this->addOption("--reverse", null, null, "From class to generate yaml file");
+        $this->addOption("--force", null, null, "Whether to force overwrite");
     }
 
     /**
@@ -56,6 +57,7 @@ class CodeCommand extends BaseCommand
         }
 
         $reverse = $this->input->getOption("reverse");
+        $force = $this->input->getOption("force");
 
         $this->uses = config("gen.code.uses");
         $this->traits = config("gen.code.traits");
@@ -155,69 +157,88 @@ class CodeCommand extends BaseCommand
 
             try {
                 $yamlfiles = glob($this->ymalFileDirectory . "/*.yaml");
-                $contexts = [];
-                foreach ($yamlfiles as $yamlfile) {
-                    $basename = basename($yamlfile);
-                    $baseCode = str_replace(".yaml", "", $basename);
-                    $i = 0;
-                    $values = Yaml::parseFile($yamlfile);
-                    foreach ($values as $key => $item) {
-                        $item["name"] = $key;
-                        $i++;
-                        if (isset($item["code"])) {
-                            $i = $item["code"] - $baseCode;
-                            if ($i < 0) {
-                                echo "{$basename} file Code {$item["code"]} Must greater than or equal to {$baseCode}" . PHP_EOL;
+                if ($yamlfiles) {
+                    $contexts = [];
+                    foreach ($yamlfiles as $yamlfile) {
+                        $basename = basename($yamlfile);
+                        $baseCode = str_replace(".yaml", "", $basename);
+                        $i = 0;
+                        $values = Yaml::parseFile($yamlfile);
+                        foreach ($values as $key => $item) {
+                            $item["name"] = $key;
+                            $i++;
+                            if (isset($item["code"])) {
+                                $i = $item["code"] - $baseCode;
+                                if ($i < 0) {
+                                    echo "{$basename} file Code {$item["code"]} Must greater than or equal to {$baseCode}" . PHP_EOL;
+                                    exit(1);
+                                }
+                            }
+                            $item["code"] = $baseCode + $i;
+                            if (!isset($item["message"])) {
+                                $item["message"] = "{$key}错误";
+                            }
+                            if (isset($contexts[$item["code"]])) {
+                                echo "{$basename} file Code {$item["code"]} Duplication." . PHP_EOL;
                                 exit(1);
                             }
+                            $contexts[$item["code"]] = $item;
                         }
-                        $item["code"] = $baseCode + $i;
-                        if (!isset($item["message"])) {
-                            $item["message"] = "{$key}错误";
-                        }
-                        if (isset($contexts[$item["code"]])) {
-                            echo "{$basename} file Code {$item["code"]} Duplication." . PHP_EOL;
-                            exit(1);
-                        }
-                        $contexts[$item["code"]] = $item;
                     }
-                }
 
-                ksort($contexts);
+                    ksort($contexts);
 
-                $file = $this->baseStorePath . "/{$this->className}.php";
-                $namespace = rtrim($this->baseNamespace, "\\");
-                $this->uses = array_filter(array_unique($this->uses));
-                $uses = [];
-                foreach ($this->uses as $use) {
-                    $uses[] = "use {$use}";
-                }
-                $class = $this->className;
-                $inheritance = $this->inheritance;
-                $traits = array_unique($this->traits);
-                $traitsTmp = [];
-                foreach ($traits as $index => $trait) {
-                    if (!$index) {
-                        $traitsTmp[] = "use {$trait}";
+                    $file = $this->baseStorePath . "/{$this->className}.php";
+                    $namespace = rtrim($this->baseNamespace, "\\");
+                    $this->uses = array_filter(array_unique($this->uses));
+                    $uses = [];
+                    foreach ($this->uses as $use) {
+                        $uses[] = "use {$use}";
+                    }
+                    $class = $this->className;
+                    $inheritance = $this->inheritance;
+                    $traits = array_unique($this->traits);
+                    $traitsTmp = [];
+                    foreach ($traits as $index => $trait) {
+                        if (!$index) {
+                            $traitsTmp[] = "use {$trait}";
+                        } else {
+                            $traitsTmp[] = "        {$trait}";
+                        }
+                    }
+                    $traits = $traitsTmp;
+
+                    $consts = [];
+                    foreach ($contexts as $context) {
+                        $m = $context["message"];
+                        $n = strtoupper($context["name"]);
+                        $c = $context["code"];
+                        $consts[] = "    /**";
+                        $consts[] = "     * @Message(\"{$m}\")";
+                        $consts[] = "     */";
+                        $consts[] = "     public const {$n} = {$c};";
+                    }
+                    $consts = implode(PHP_EOL, $consts);
+
+                    $isWrite = true;
+                    if (file_exists($file) && !$force) {
+                        $isWrite = false;
+                        fwrite(STDOUT, "[{$file}] Already in existence, Overwrite or not [Y/n]:");
+                        $in = fgets(STDIN);
+                        if ("Y" == strtoupper(str_replace(PHP_EOL, "", $in))) {
+                            $isWrite = true;
+                        }
+                    }
+                    if ($isWrite) {
+                        $this->write($file, $this->content($namespace, $uses, $class, $inheritance, $traits, $consts));
                     } else {
-                        $traitsTmp[] = "        {$trait}";
+                        echo "Not written" . PHP_EOL;
+                        exit(1);
                     }
+                } else {
+                    echo "Not found yaml file" . PHP_EOL;
+                    exit(1);
                 }
-                $traits = $traitsTmp;
-
-                $consts = [];
-                foreach ($contexts as $context) {
-                    $m = $context["message"];
-                    $n = strtoupper($context["name"]);
-                    $c = $context["code"];
-                    $consts[] = "    /**";
-                    $consts[] = "     * @Message(\"{$m}\")";
-                    $consts[] = "     */";
-                    $consts[] = "     public const {$n} = {$c};";
-                }
-                $consts = implode(PHP_EOL, $consts);
-
-                $this->write($file, $this->content($namespace, $uses, $class, $inheritance, $traits, $consts));
             } catch (ParseException $e) {
                 echo "Yaml Parse error: " . $e->getMessage() . PHP_EOL;
                 exit(1);
