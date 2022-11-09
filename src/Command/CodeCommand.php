@@ -199,7 +199,6 @@ class CodeCommand extends BaseCommand
                         $values = Yaml::parseFile($yamlfile);
                         foreach ($values as $key => $item) {
                             $item["name"] = $key;
-                            $i++;
                             if (isset($item["code"])) {
                                 $i = $item["code"] - $baseCode;
                                 if ($i < 0) {
@@ -216,6 +215,7 @@ class CodeCommand extends BaseCommand
                                 exit(1);
                             }
                             $contexts[$item["code"]] = $item;
+                            $i++;
                         }
                     }
 
