@@ -33,8 +33,8 @@ class CodeCommand extends BaseCommand
         parent::configure();
         $description = str_pad("Build Code.", 20, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:code');
-        $this->addOption("--reverse", null, null, "From class to generate yaml file");
-        $this->addOption("--force", null, null, "Whether to force overwrite");
+        $this->addOption("--reverse", "-r", null, "From class to generate yaml file");
+        $this->addOption("--force", "-f", null, "Whether to force overwrite");
     }
 
     /**
