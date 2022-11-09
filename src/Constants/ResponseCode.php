@@ -28,13 +28,12 @@ class ResponseCode extends AbstractConstants
      * @Message("服务器开小差了")
      */
     public const SERVER_ERROR = 500;
-
     /**
      * @Message("主键%s错误")
      */
-    public const PRIMARY_ID_ERROR = 200001;
+    public const PRIMARY_ID_ERROR = 200000;
     /**
      * @Message("%s不存在")
      */
-    public const NOT_EXIST_ERROR = 200002;
+    public const NOT_EXIST_ERROR = 200001;
 }

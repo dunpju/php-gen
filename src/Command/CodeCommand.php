@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Annotations\Message;
+use Dengpju\PhpGen\Constants\ResponseCode;
 use Dengpju\PhpGen\Utils\MkdirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -47,6 +48,9 @@ class CodeCommand extends BaseCommand
         ];
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function handle()
     {
         $this->autoPublish();
@@ -74,6 +78,30 @@ class CodeCommand extends BaseCommand
             exit(1);
         }
 
+        $file = $this->baseStorePath . "/{$this->className}.php";
+        $yamlfiles = glob($this->ymalFileDirectory . "/*.yaml");
+
+        $allowWrite = true;
+        $isExistClass = true;
+        $isExistFile = file_exists($file);
+        if (!$isExistFile && !$yamlfiles) {
+            $isExistClass = false;
+            $reverse = true;
+        } else {
+            if ($isExistFile) {
+                if (!$force) {
+                    fwrite(STDOUT, "[{$file}] Already in exist, Overwrite or not [Y/n]:");
+                    $in = fgets(STDIN);
+                    if ("Y" == strtoupper(str_replace(PHP_EOL, "", $in))) {
+                        $allowWrite = true;
+                    } else {
+                        echo "Not written" . PHP_EOL;
+                        exit(1);
+                    }
+                }
+            }
+        }
+
         if ($reverse) {
             $files = [];
             $names = [];
@@ -81,7 +109,11 @@ class CodeCommand extends BaseCommand
             $messages = [];
             $prev = 0;
             $currentFileName = "";
-            $ref = new \ReflectionClass("{$this->baseNamespace}{$this->className}");
+            $refClass = "{$this->baseNamespace}{$this->className}";
+            if (!$isExistClass) {
+                $refClass = ResponseCode::class;
+            }
+            $ref = new \ReflectionClass($refClass);
             foreach ($ref->getConstants() as $name => $val) {
                 $docComment = $ref->getReflectionConstant($name)->getDocComment();
 
@@ -156,7 +188,6 @@ class CodeCommand extends BaseCommand
             $this->combine();
 
             try {
-                $yamlfiles = glob($this->ymalFileDirectory . "/*.yaml");
                 if ($yamlfiles) {
                     $contexts = [];
                     foreach ($yamlfiles as $yamlfile) {
@@ -188,7 +219,6 @@ class CodeCommand extends BaseCommand
 
                     ksort($contexts);
 
-                    $file = $this->baseStorePath . "/{$this->className}.php";
                     $namespace = rtrim($this->baseNamespace, "\\");
                     $this->uses = array_filter(array_unique($this->uses));
                     $uses = [];
@@ -218,22 +248,11 @@ class CodeCommand extends BaseCommand
                         $consts[] = "     */";
                         $consts[] = "     public const {$n} = {$c};";
                     }
+
                     $consts = implode(PHP_EOL, $consts);
 
-                    $isWrite = true;
-                    if (file_exists($file) && !$force) {
-                        $isWrite = false;
-                        fwrite(STDOUT, "[{$file}] Already in existence, Overwrite or not [Y/n]:");
-                        $in = fgets(STDIN);
-                        if ("Y" == strtoupper(str_replace(PHP_EOL, "", $in))) {
-                            $isWrite = true;
-                        }
-                    }
-                    if ($isWrite) {
+                    if ($allowWrite) {
                         $this->write($file, $this->content($namespace, $uses, $class, $inheritance, $traits, $consts));
-                    } else {
-                        echo "Not written" . PHP_EOL;
-                        exit(1);
                     }
                 } else {
                     echo "Not found yaml file" . PHP_EOL;
