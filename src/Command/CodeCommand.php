@@ -88,15 +88,17 @@ class CodeCommand extends BaseCommand
             $isExistClass = false;
             $reverse = true;
         } else {
-            if ($isExistFile) {
-                if (!$force) {
-                    fwrite(STDOUT, "[{$file}] Already in exist, Overwrite or not [Y/n]:");
-                    $in = fgets(STDIN);
-                    if ("Y" == strtoupper(str_replace(PHP_EOL, "", $in))) {
-                        $allowWrite = true;
-                    } else {
-                        echo "Not written" . PHP_EOL;
-                        exit(1);
+            if (!$reverse) {
+                if ($isExistFile) {
+                    if (!$force) {
+                        fwrite(STDOUT, "[{$file}] Already in exist, Overwrite or not [Y/n]:");
+                        $in = fgets(STDIN);
+                        if ("Y" == strtoupper(str_replace(PHP_EOL, "", $in))) {
+                            $allowWrite = true;
+                        } else {
+                            echo "Not written" . PHP_EOL;
+                            exit(1);
+                        }
                     }
                 }
             }
