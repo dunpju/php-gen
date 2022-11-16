@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Dengpju\PhpGen;
 
 class ConfigProvider
@@ -33,6 +34,12 @@ class ConfigProvider
                     'description' => 'php gen config',
                     'source' => __DIR__ . '/../publish/gen.php',
                     'destination' => BASE_PATH . '/config/autoload/gen.php',
+                ],
+                [
+                    'id' => 'aop_route',
+                    'description' => 'aop route',
+                    'source' => __DIR__ . '/../publish/aop_route.php',
+                    'destination' => BASE_PATH . '/config/autoload/aop_route.php',
                 ],
                 [
                     'id' => 'watcher_config',
