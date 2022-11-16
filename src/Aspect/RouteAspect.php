@@ -73,7 +73,9 @@ class RouteAspect extends AbstractAspect
                     $proceedingJoinPoint->arguments["keys"]["options"]["middleware"] = $excMiddlewaresInstance->excludeMiddlewares($targetMiddlewares);
                 }
             }
-            $proceedingJoinPoint->arguments["keys"]["route"] = "/" . str_replace("/", "", $globalPrefix) . $proceedingJoinPoint->arguments["keys"]["route"];
+            if ($globalPrefix) {
+                $proceedingJoinPoint->arguments["keys"]["route"] = "/" . str_replace("/", "", $globalPrefix) . $proceedingJoinPoint->arguments["keys"]["route"];
+            }
         }
         return $proceedingJoinPoint->process();
     }
