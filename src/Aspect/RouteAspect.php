@@ -49,7 +49,7 @@ class RouteAspect extends AbstractAspect
                      */
                     $methodGroupInstance = $methodGroup[0]->newInstance();
                     if ($methodGroupInstance->prefix) {
-                        $proceedingJoinPoint->arguments["keys"]["route"] = "/" . str_replace("/", "", $methodGroupInstance->prefix) . $proceedingJoinPoint->arguments["keys"]["route"];
+                        $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($methodGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
                     }
                 } else {
                     $refHandlerClass = new \ReflectionClass($handler[0]);
@@ -60,7 +60,7 @@ class RouteAspect extends AbstractAspect
                          */
                         $classGroupInstance = $classGroup[0]->newInstance();
                         if ($classGroupInstance->prefix) {
-                            $proceedingJoinPoint->arguments["keys"]["route"] = "/" . str_replace("/", "", $classGroupInstance->prefix) . $proceedingJoinPoint->arguments["keys"]["route"];
+                            $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($classGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
                         }
                     }
                 }
@@ -74,7 +74,7 @@ class RouteAspect extends AbstractAspect
                 }
             }
             if ($globalPrefix) {
-                $proceedingJoinPoint->arguments["keys"]["route"] = "/" . str_replace("/", "", $globalPrefix) . $proceedingJoinPoint->arguments["keys"]["route"];
+                $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($globalPrefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
             }
         }
         return $proceedingJoinPoint->process();

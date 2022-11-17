@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Command;
 
-use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
@@ -74,8 +73,8 @@ class RouteCommand extends BaseCommand
 
         ksort($routerCollector);
         foreach ($routerCollector as $item) {
-            $method = str_pad($item[0], 7, " ", STR_PAD_RIGHT)." ";
-            $route = str_pad($item[1], 32, " ", STR_PAD_RIGHT)." ";
+            $method = str_pad($item[0], 8, " ", STR_PAD_RIGHT) . " ";
+            $route = str_pad($item[1], 48, " ", STR_PAD_RIGHT) . " ";
             $handle = str_pad($item[2], 64, " ", STR_PAD_RIGHT);
             $middleware = $item[3];
             $this->line("{$method}{$route}{$handle}{$middleware}", 'info');
