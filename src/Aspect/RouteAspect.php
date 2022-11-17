@@ -23,7 +23,7 @@ class RouteAspect extends AbstractAspect
 
     public function __construct()
     {
-        $this->switch = config("aop_route.switch");
+        $this->switch = (bool)config("aop_route.switch");
     }
 
     /**
@@ -35,7 +35,7 @@ class RouteAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint): mixed
     {
         if ($this->switch) {
-            $globalPrefix = config("aop_route.global_prefix");
+            $globalPrefix = (string)config("aop_route.global_prefix");
             $handler = $proceedingJoinPoint->arguments["keys"]["handler"];
             if (is_array($handler) && count($handler) >= 2) {
                 $options = $proceedingJoinPoint->arguments["keys"]["options"];
