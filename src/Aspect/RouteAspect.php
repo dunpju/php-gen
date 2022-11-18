@@ -30,38 +30,40 @@ class RouteAspect extends AbstractAspect
         $handler = $proceedingJoinPoint->arguments["keys"]["handler"];
         if (is_array($handler) && count($handler) >= 2) {
             $options = $proceedingJoinPoint->arguments["keys"]["options"];
-            $targetMiddlewares = $options["middleware"];
-            $handler = $proceedingJoinPoint->arguments["keys"]["handler"];
-            $refHandlerMethod = new \ReflectionMethod($handler[0], $handler[1]);
-            $methodGroup = $refHandlerMethod->getAttributes(Group::class);
-            if ($methodGroup) {
-                /**
-                 * @var Group $methodGroupInstance
-                 */
-                $methodGroupInstance = $methodGroup[0]->newInstance();
-                if ($methodGroupInstance->prefix) {
-                    $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($methodGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
-                }
-            } else {
-                $refHandlerClass = new \ReflectionClass($handler[0]);
-                $classGroup = $refHandlerClass->getAttributes(Group::class);
-                if ($classGroup) {
+            if ($options) {
+                $targetMiddlewares = $options["middleware"];
+                $handler = $proceedingJoinPoint->arguments["keys"]["handler"];
+                $refHandlerMethod = new \ReflectionMethod($handler[0], $handler[1]);
+                $methodGroup = $refHandlerMethod->getAttributes(Group::class);
+                if ($methodGroup) {
                     /**
-                     * @var Group $classGroupInstance
+                     * @var Group $methodGroupInstance
                      */
-                    $classGroupInstance = $classGroup[0]->newInstance();
-                    if ($classGroupInstance->prefix) {
-                        $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($classGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
+                    $methodGroupInstance = $methodGroup[0]->newInstance();
+                    if ($methodGroupInstance->prefix) {
+                        $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($methodGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
+                    }
+                } else {
+                    $refHandlerClass = new \ReflectionClass($handler[0]);
+                    $classGroup = $refHandlerClass->getAttributes(Group::class);
+                    if ($classGroup) {
+                        /**
+                         * @var Group $classGroupInstance
+                         */
+                        $classGroupInstance = $classGroup[0]->newInstance();
+                        if ($classGroupInstance->prefix) {
+                            $proceedingJoinPoint->arguments["keys"]["route"] = "/" . trim($classGroupInstance->prefix, "/") . $proceedingJoinPoint->arguments["keys"]["route"];
+                        }
                     }
                 }
-            }
-            $excMiddlewares = $refHandlerMethod->getAttributes(ExcMiddlewares::class);
-            if ($excMiddlewares) {
-                /**
-                 * @var ExcMiddlewares $excMiddlewaresInstance
-                 */
-                $excMiddlewaresInstance = $excMiddlewares[0]->newInstance();
-                $proceedingJoinPoint->arguments["keys"]["options"]["middleware"] = $excMiddlewaresInstance->excludeMiddlewares($targetMiddlewares);
+                $excMiddlewares = $refHandlerMethod->getAttributes(ExcMiddlewares::class);
+                if ($excMiddlewares) {
+                    /**
+                     * @var ExcMiddlewares $excMiddlewaresInstance
+                     */
+                    $excMiddlewaresInstance = $excMiddlewares[0]->newInstance();
+                    $proceedingJoinPoint->arguments["keys"]["options"]["middleware"] = $excMiddlewaresInstance->excludeMiddlewares($targetMiddlewares);
+                }
             }
         }
         $globalPrefix = (string)config("gen_route.global_prefix");
