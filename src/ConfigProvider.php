@@ -36,10 +36,10 @@ class ConfigProvider
                     'destination' => BASE_PATH . '/config/autoload/gen.php',
                 ],
                 [
-                    'id' => 'aop_route',
-                    'description' => 'aop route',
-                    'source' => __DIR__ . '/../publish/aop_route.php',
-                    'destination' => BASE_PATH . '/config/autoload/aop_route.php',
+                    'id' => 'gen_route',
+                    'description' => 'gen route config',
+                    'source' => __DIR__ . '/../publish/gen_route.php',
+                    'destination' => BASE_PATH . '/config/autoload/gen_route.php',
                 ],
                 [
                     'id' => 'watcher_config',
