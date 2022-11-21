@@ -71,9 +71,9 @@ class %CLASS% extends %INHERITANCE%
     /**
      * @param int $%PRIMARY_KEY%
      * @param array|string[] $fields
-     * @return %MODEL%|null
+     * @return %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|null
      */
-    public function getBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%, array $fields = ["*"]): ?%MODEL%
+    public function getBy%UC_PRIMARY_KEY%(int $%PRIMARY_KEY%, array $fields = ["*"]): %MODEL%|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|null
     {
         return $this->model::query()->select($fields)->where($this->primaryKey, $%PRIMARY_KEY%)->first();
     }
