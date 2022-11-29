@@ -104,10 +104,11 @@ class CodeCommand extends BaseCommand
             }
         }
 
+        $names = [];
+        $codes = [];
+
         if ($reverse) {
             $files = [];
-            $names = [];
-            $codes = [];
             $messages = [];
             $prev = 0;
             $currentFileName = "";
@@ -162,7 +163,7 @@ class CodeCommand extends BaseCommand
                     ]);
                 }
 
-                if (in_array($names, $names)) {
+                if (in_array($name, $names)) {
                     echo "Constant {$name} Duplication." . PHP_EOL;
                     exit(1);
                 }
@@ -245,6 +246,16 @@ class CodeCommand extends BaseCommand
                         $m = $context["message"];
                         $n = strtoupper($context["name"]);
                         $c = $context["code"];
+                        if (in_array($context["name"], $names)) {
+                            echo "Constant {$context["name"]} Duplication." . PHP_EOL;
+                            exit(1);
+                        }
+                        $names[] = $context["name"];
+                        if (in_array($c, $codes)) {
+                            echo "Code {$c} Duplication." . PHP_EOL;
+                            exit(1);
+                        }
+                        $codes[] = $c;
                         $consts[] = "    /**";
                         $consts[] = "     * @Message(\"{$m}\")";
                         $consts[] = "     */";

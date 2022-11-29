@@ -147,6 +147,9 @@ class ServiceCommand extends BaseCommand
             }
             $traits = $traitsTmp;
             $this->write($file, $this->content($namespace, $uses, $class, $traits, $validateException, $businessException));
+            $validateCmd = "php bin/hyperf.php dengpju:validate name={$name} path={$path}";
+            $res = `$validateCmd`;
+            $this->line($res, 'info');
         }
 
         $this->line('Service finish', 'info');
