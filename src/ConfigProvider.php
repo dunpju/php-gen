@@ -42,6 +42,12 @@ class ConfigProvider
                     'destination' => BASE_PATH . '/config/autoload/gen_route.php',
                 ],
                 [
+                    'id' => 'gen_crontab',
+                    'description' => 'gen crontab config',
+                    'source' => __DIR__ . '/../publish/gen_crontab.php',
+                    'destination' => BASE_PATH . '/config/autoload/gen_crontab.php',
+                ],
+                [
                     'id' => 'watcher_config',
                     'description' => 'watcher config',
                     'source' => __DIR__ . '/../publish/watcher_config.php',

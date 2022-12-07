@@ -13,8 +13,9 @@ use Hyperf\Crontab\Annotation\Crontab;
  * @package App\Crontab
  */
 // 每天00:00:00执行
-#[Crontab(rule: "0 0 12/1 * *", name: "LogClearCrontab", callback: "execute", memo: "清理日志", enable: "isEnable")]
+//#[Crontab(rule: "0 0 12/1 * *", name: "LogClearCrontab", callback: "execute", memo: "清理日志", enable: "isEnable")]
 //#[Crontab(rule: "*/2 * * * * *", name: "LogClear", callback: "execute", memo: "清理日志", enable: "isEnable")]
+#[Crontab(rule: "rule", name: "LogClear", callback: "execute", memo: "清理日志", enable: "isEnable")]
 class LogClearCrontab
 {
     public function execute()
@@ -36,10 +37,18 @@ class LogClearCrontab
     }
 
     /**
+     * @return string
+     */
+    public function rule(): string
+    {
+        return (string)config("gen_crontab.rule");
+    }
+
+    /**
      * @return bool
      */
     public function isEnable(): bool
     {
-        return true;
+        return (bool)config("gen_crontab.enable");
     }
 }
