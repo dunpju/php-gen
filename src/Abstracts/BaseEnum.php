@@ -6,10 +6,13 @@ namespace Dengpju\PhpGen\Abstracts;
 
 
 use Dengpju\PhpGen\Annotations\Message;
+use Dengpju\PhpGen\Enum\Attribute;
 use Dengpju\PhpGen\Exception\EnumException;
 
 abstract class BaseEnum
 {
+    use Attribute;
+
     /**
      * @param null $value
      * @param bool $strict

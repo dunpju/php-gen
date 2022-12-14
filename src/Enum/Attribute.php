@@ -24,27 +24,22 @@ trait Attribute
      */
     private static array $container = [];
 
-    public static function init()
+    public static function init(): void
     {
         if (!static::$isInit) {
             static::$selfReflectionClass = new  ReflectionClass(static::class);
             $refClass = static::$selfReflectionClass;
-            $enumAttribute = $refClass->getAttributes(EnumAttribute::class);
-            if ($enumAttribute) {
-                /**
-                 * @var EnumAttribute $enumAttributeInstance
-                 */
-                $enumAttributeInstance = $enumAttribute[0]->newInstance();
-                foreach ($refClass->getConstants() as $name => $val) {
-                    $attributes = $refClass->getReflectionConstant($name)->getAttributes($enumAttributeInstance->getName());
-                    if ($attributes) {
-                        $attribute = $attributes[0];
-                        static::$container[$val] = $attribute->newInstance();
-                    } else {
-                        throw new EnumException($enumAttributeInstance->getName());
+
+            foreach ($refClass->getConstants() as $name => $val) {
+                $attributes = $refClass->getReflectionConstant($name)->getAttributes();
+                foreach ($attributes as $attribute) {
+                    $attrInstance = $attribute->newInstance();
+                    if ($attrInstance instanceof EnumAttributeInterface) {
+                        static::$container[$val] = $attrInstance;
                     }
                 }
             }
+
             static::$isInit = true;
         }
     }
@@ -57,11 +52,11 @@ trait Attribute
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (EnumAttribute::Value === $name) {
+        if (method_exists(EnumAttributeInterface::class, $name)) {
             if (count($arguments) < 1) {
                 throw new EnumException("枚举Pointer参数错误");
             }
-            $value = $arguments[0];
+            $value = reset($arguments);
             if (!isset(static::$container[$value])) {
                 static::init();
             }
