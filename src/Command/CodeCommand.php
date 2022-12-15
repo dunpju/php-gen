@@ -255,6 +255,11 @@ class CodeCommand extends BaseCommand
                             echo "Code {$c} Duplication." . PHP_EOL;
                             exit(1);
                         }
+                        
+                        if (str_contains($m, "_error")) {
+                            $m = str_replace("_error", "", $m);
+                        }
+
                         $codes[] = $c;
                         $consts[] = "    /**";
                         $consts[] = "     * @Message(\"{$m}\")";
