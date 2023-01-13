@@ -1,18 +1,16 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Dengpju\PhpGen\Model;
-
 
 
 use Dengpju\PhpGen\Exception\ModelException;
 
 /**
- * @method attributesToArray
- * @method getPrimaryKey
- * @method originalIsEquivalent($key, $value)
- * @method newQuery
+ * @method array attributesToArray()
+ * @method string getPrimaryKey()
+ * @method boolean originalIsEquivalent($key, $value)
+ * @method \Hyperf\Database\Model\Builder newQuery()
  *
  * Trait Save
  * @package Dengpju\PhpGen\Model
@@ -62,7 +60,7 @@ trait Save
                 foreach ($wheres as $where) {
                     $newQuery->where($where->column, $where->operator, $where->value, $where->boolean);
                 }
-                return $newQuery->update($values);
+                return (boolean)$newQuery->update($values);
             }
             return false;
         } else {
