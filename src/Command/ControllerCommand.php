@@ -58,9 +58,9 @@ class ControllerCommand extends BaseCommand
         $path = (string)$this->input->getArgument('path');
         $name = str_replace("name=", "", $name);
 
-        $inheritance = config("gen.controller.inheritance");
+        $inheritancePath = config("gen.controller.inheritance");
         $this->uses = config("gen.controller.uses");
-        $this->inheritance = $inheritance;
+        $this->inheritance = $inheritancePath;
         $this->baseStorePath = config("gen.controller.base_store_path");
         $this->baseNamespace = config("gen.controller.base_namespace");
         $serviceBaseNamespace = config("gen.service.base_namespace");
@@ -95,7 +95,7 @@ class ControllerCommand extends BaseCommand
 
             foreach ($this->uses as $index => $use) {
                 $expUse = array_filter(explode("\\", $use));
-                $expBaseNamespace = array_filter(explode("\\", $inheritance));
+                $expBaseNamespace = array_filter(explode("\\", $inheritancePath));
                 if (count($expUse) == count($expBaseNamespace) + 1) {
                     array_pop($expUse);
                     if (implode("\\", $expUse) == implode("\\", $expBaseNamespace)) {
