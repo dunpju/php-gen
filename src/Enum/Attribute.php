@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Enum;
 
 
-use Dengpju\PhpGen\Annotations\EnumAttribute;
 use Dengpju\PhpGen\Exception\EnumException;
 use ReflectionClass;
 
@@ -16,6 +15,10 @@ trait Attribute
      */
     private static bool $isInit = false;
     /**
+     * @var string
+     */
+    private static string $staticClass = "";
+    /**
      * @var ReflectionClass
      */
     private static ReflectionClass $selfReflectionClass;
@@ -24,9 +27,10 @@ trait Attribute
      */
     private static array $container = [];
 
-    public static function init(): void
+    protected static function init(): void
     {
-        if (!static::$isInit) {
+        if (!static::$isInit || self::$staticClass != static::class) {
+            self::$staticClass = static::class;
             static::$selfReflectionClass = new  ReflectionClass(static::class);
             $refClass = static::$selfReflectionClass;
 
@@ -35,7 +39,7 @@ trait Attribute
                 foreach ($attributes as $attribute) {
                     $attrInstance = $attribute->newInstance();
                     if ($attrInstance instanceof EnumAttributeInterface) {
-                        static::$container[$val] = $attrInstance;
+                        static::$container[static::class][$val] = $attrInstance;
                     }
                 }
             }
@@ -57,14 +61,19 @@ trait Attribute
                 throw new EnumException("枚举Pointer参数错误");
             }
             $value = reset($arguments);
-            if (!isset(static::$container[$value])) {
+            if (!isset(static::$container[static::class])) {
                 static::init();
+            } else {
+                if (!isset(static::$container[static::class][$value])) {
+                    static::init();
+                }
             }
-            if (!isset(static::$container[$value])) {
+
+            if (!isset(static::$container[static::class][$value])) {
                 $class = basename(str_replace("\\", "/", static::class));
                 throw new EnumException("[{$value}]不存在{$class}枚举中");
             }
-            return static::$container[$value];
+            return static::$container[static::class][$value];
         }
     }
 }
