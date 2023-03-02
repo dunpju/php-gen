@@ -25,7 +25,7 @@ class RouteCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Look Route List.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Look Route List.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:route server=http');
     }
 

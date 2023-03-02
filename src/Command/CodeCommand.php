@@ -6,7 +6,7 @@ namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Annotations\Message;
 use Dengpju\PhpGen\Constants\ResponseCode;
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,7 +32,7 @@ class CodeCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Build Code.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Build Code.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:code');
         $this->addOption("--reverse", "-r", null, "From class to generate yaml file");
         $this->addOption("--force", "-f", null, "Whether to force overwrite");
@@ -179,7 +179,7 @@ class CodeCommand extends BaseCommand
                 foreach ($files as $name => $context) {
                     $yaml = Yaml::dump($context);
 
-                    if (!MkdirUtil::dir($this->ymalFileDirectory)) {
+                    if (!DirUtil::mkdir($this->ymalFileDirectory)) {
                         echo "Failed to create a directory." . PHP_EOL;
                         exit(1);
                     }

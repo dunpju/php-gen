@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Utils\CamelizeUtil;
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -39,7 +39,7 @@ class DaoCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Build Dao.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Build Dao.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:dao conn=default model=all Or php bin/hyperf.php dengpju:dao conn=default model=ModelName');
     }
 
@@ -87,7 +87,7 @@ class DaoCommand extends BaseCommand
         $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
 
         $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
-        if (!MkdirUtil::dir($storePath)) {
+        if (!DirUtil::mkdir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
             exit(1);
         }

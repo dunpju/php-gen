@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Command;
 
-use Dengpju\PhpGen\Traits\RequestTrait;
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\DbConnection\Db;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -56,7 +54,7 @@ class ServiceCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Build Service.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Build Service.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:service name=name path=path');
     }
 
@@ -95,7 +93,7 @@ class ServiceCommand extends BaseCommand
         } else {
             $storePath = $this->baseStorePath;
         }
-        if (!MkdirUtil::dir($storePath)) {
+        if (!DirUtil::mkdir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
             exit(1);
         }

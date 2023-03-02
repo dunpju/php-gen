@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Utils\CamelizeUtil;
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
 use Psr\Container\ContainerInterface;
@@ -28,7 +28,7 @@ class ModelCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Build Model.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Build Model.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . 'php bin/hyperf.php dengpju:model conn=default table=all Or php bin/hyperf.php dengpju:model conn=default table=TableName');
         $this->addOption('conn', 'c', InputOption::VALUE_REQUIRED, 'Data connection');
         $this->addOption('table', 't', InputOption::VALUE_REQUIRED, 'Table Name,all Generate Full Table Model');
@@ -67,7 +67,7 @@ class ModelCommand extends BaseCommand
         $commands = $connConfig['commands'];
         $genModel = $commands['gen:model'];
         $path = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));
-        if (!MkdirUtil::dir(BASE_PATH . "/{$path}")) {
+        if (!DirUtil::mkdir(BASE_PATH . "/{$path}")) {
             echo "Failed to create a directory." . PHP_EOL;
             exit(1);
         }

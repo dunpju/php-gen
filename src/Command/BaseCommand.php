@@ -10,6 +10,8 @@ abstract class BaseCommand extends HyperfCommand
 {
     use SaveFile;
 
+    const STR_PAD_LENGTH = 24;
+
     /**
      * @var array|string[]
      */

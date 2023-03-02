@@ -1,0 +1,4 @@
+public function %NAME%(): %RETURN%
+{
+    return $this->success($res);
+}

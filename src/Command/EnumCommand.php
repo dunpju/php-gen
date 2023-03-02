@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Utils\CamelizeUtil;
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,7 +35,7 @@ class EnumCommand extends BaseCommand
     public function configure()
     {
         parent::configure();
-        $description = str_pad("Build Enum.", 20, " ", STR_PAD_RIGHT);
+        $description = str_pad("Build Enum.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
         $this->setDescription($description . "php bin/hyperf.php dengpju:enum conn=default name=yes_or_no flag='是否:yes-1-是,no-2-否'");
     }
 
@@ -72,7 +72,7 @@ class EnumCommand extends BaseCommand
         $this->baseNamespace = config("gen.enum.base_namespace");
 
         $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
-        if (!MkdirUtil::dir($storePath)) {
+        if (!DirUtil::mkdir($storePath)) {
             echo "Failed to create a directory." . PHP_EOL;
             exit(1);
         }

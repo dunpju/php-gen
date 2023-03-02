@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Crontab;
 
 
-use Dengpju\PhpGen\Utils\MkdirUtil;
+use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Crontab\Annotation\Crontab;
 
 /**
@@ -21,7 +21,7 @@ class LogClearCrontab
     public function execute()
     {
         $path = BASE_PATH . "/runtime/logs";
-        if (!MkdirUtil::dir($path)) {
+        if (!DirUtil::mkdir($path)) {
             return;
         }
         $logs = glob($path . "/*");
