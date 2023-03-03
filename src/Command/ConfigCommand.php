@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Command;
 
+use Dengpju\PhpGen\Payload\ClassPayload;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -50,20 +51,36 @@ class ConfigCommand extends BaseCommand
 
         $globs = glob(BASE_PATH . "/config/autoload/*.php");
         foreach ($globs as $file) {
+            $this->classContainer = [];
             dump($file);
             $basename = basename($file, ".php");
             dump($basename);
+            $ClassPayload = new ClassPayload();
+            $ClassPayload->path = $basename;
+            $this->classContainer[$basename] = $ClassPayload;
             dump(config($basename));
             $this->each(config($basename), $basename);
+            foreach ($this->classContainer as $class) {
+
+            }
             break;
         }
-
+        dump($this->classContainer);
         $this->line("fffff", 'info');
     }
+
+    /**
+     * @var ClassPayload[]
+     */
+    protected array $classContainer = [];
 
     protected function each(array $config, string $parent)
     {
         foreach ($config as $key => $value) {
+            // 方法
+            if (isset($this->classContainer[$parent])) {
+                $this->classContainer[$parent]->methods[] = $key;
+            }
             if (is_string($key)) {
                 if (is_array($value)) {
                     $hasNumericKey = false;
@@ -74,7 +91,12 @@ class ConfigCommand extends BaseCommand
                         }
                     }
                     if (!$hasNumericKey) {
-                        $this->each($value, $parent . "_" . $key);
+                        // 类
+                        $classPath = $parent . "." . $key;
+                        $ClassPayload = new ClassPayload();
+                        $ClassPayload->path = $classPath;
+                        $this->classContainer[$classPath] = $ClassPayload;
+                        $this->each($value, $classPath);
                     } else {
                         echo $parent, " ", $key, " = ", json_encode($value, JSON_UNESCAPED_UNICODE), PHP_EOL;
                     }
