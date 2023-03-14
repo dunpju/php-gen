@@ -14,6 +14,6 @@ class MethodPayload
     public const OBJECT = 5;
 
     public string $name = "";
-    public string $returnType = "";
+    public int $returnType = 0;
     public string $return = "";
 }

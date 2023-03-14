@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Payload\ClassPayload;
+use Dengpju\PhpGen\Payload\MethodPayload;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -79,7 +80,9 @@ class ConfigCommand extends BaseCommand
         foreach ($config as $key => $value) {
             // 方法
             if (isset($this->classContainer[$parent])) {
-                $this->classContainer[$parent]->methods[] = $key;
+                $MethodPayload = new MethodPayload();
+                $MethodPayload->name = $key;
+                $this->classContainer[$parent]->methods[] = $MethodPayload;
             }
             if (is_string($key)) {
                 if (is_array($value)) {
