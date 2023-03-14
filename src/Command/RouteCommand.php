@@ -54,6 +54,9 @@ class RouteCommand extends BaseCommand
                  * @var \Hyperf\HttpServer\Router\Handler $handler
                  */
                 foreach ($handlers as $handler) {
+                    if (is_array($handler) && isset($handler["routeMap"])) {
+                        $handler = (object)current(current($handler["routeMap"]));
+                    }
                     $options = $handler->options;
                     $middlewares = isset($options["middleware"]) ? $options["middleware"] : [];
                     if (is_array($handler->callback)) {
@@ -67,6 +70,7 @@ class RouteCommand extends BaseCommand
                         $key = "{$handler->callback}.{$method}.{$handler->route}";
                         $routerCollector[$key] = [$method, $handler->route, $handler->callback, sprintf("[%s]", implode(",", $middlewares))];
                     }
+
                 }
             }
         }
