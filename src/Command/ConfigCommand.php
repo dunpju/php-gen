@@ -41,7 +41,6 @@ class ConfigCommand extends BaseCommand
 
     public function handle()
     {
-
         $this->autoPublish();
         dump(BASE_PATH);
         $componentsDir = BASE_PATH . "/app/Config/Components";

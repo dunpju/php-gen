@@ -66,7 +66,7 @@ class Context
                     });
                 }
                 $begin = true;
-                if ((time() - $beginTime) > $this->timeout || $over->pop(0.1)) {
+                if ((time() - $beginTime) > $this->timeout || $over->pop(0.01)) {
                     break;
                 }
             }
