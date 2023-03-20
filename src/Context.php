@@ -66,13 +66,9 @@ class Context
                     });
                 }
                 $begin = true;
-                if ((time() - $beginTime) > $this->timeout) {
+                if ((time() - $beginTime) > $this->timeout || $over->pop(0.1)) {
                     break;
                 }
-                if ($over->pop(0.1)) {
-                    break;
-                }
-                \Swoole\Coroutine::sleep(0.1);
             }
         });
         return $this;
