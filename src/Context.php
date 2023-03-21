@@ -55,17 +55,13 @@ class Context
     protected function do(callable $callable): static
     {
         \Swoole\Coroutine::create(function () use ($callable) {
-            $beginTime = time();
             $over = new Channel(1);
-            $begin = false;
+            \Swoole\Coroutine::create(function () use ($over, $callable) {
+                $this->channel->push($callable());
+                $over->push(true);
+            });
+            $beginTime = time();
             while (true) {
-                if (!$begin) {
-                    \Swoole\Coroutine::create(function () use ($over, $callable) {
-                        $this->channel->push($callable());
-                        $over->push(true);
-                    });
-                }
-                $begin = true;
                 if ((time() - $beginTime) > $this->timeout || $over->pop(0.01)) {
                     break;
                 }
