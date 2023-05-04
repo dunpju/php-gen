@@ -6,6 +6,7 @@ namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Payload\ClassPayload;
 use Dengpju\PhpGen\Payload\MethodPayload;
+use Dengpju\PhpGen\Payload\PropertyPayload;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -59,7 +60,6 @@ class ConfigCommand extends BaseCommand
             $ClassPayload = new ClassPayload();
             $ClassPayload->path = $basename;
             $this->classContainer[$basename] = $ClassPayload;
-            dump(config($basename));
             $this->each(config($basename), $basename);
             foreach ($this->classContainer as $class) {
 
@@ -77,13 +77,8 @@ class ConfigCommand extends BaseCommand
 
     protected function each(array $config, string $parent)
     {
+        $properties = [];
         foreach ($config as $key => $value) {
-            // 方法
-            if (isset($this->classContainer[$parent])) {
-                $MethodPayload = new MethodPayload();
-                $MethodPayload->name = $key;
-                $this->classContainer[$parent]->methods[] = $MethodPayload;
-            }
             if (is_string($key)) {
                 if (is_array($value)) {
                     $hasNumericKey = false;
@@ -91,6 +86,8 @@ class ConfigCommand extends BaseCommand
                         if (is_numeric($k)) {
                             $hasNumericKey = true;
                             break;
+                        } elseif (is_string($k)) {
+                            $properties[] = new PropertyPayload(gettype($v), $k);
                         }
                     }
                     if (!$hasNumericKey) {
@@ -98,16 +95,11 @@ class ConfigCommand extends BaseCommand
                         $classPath = $parent . "." . $key;
                         $ClassPayload = new ClassPayload();
                         $ClassPayload->path = $classPath;
+                        $ClassPayload->properties = $properties;
                         $this->classContainer[$classPath] = $ClassPayload;
                         $this->each($value, $classPath);
-                    } else {
-                        echo $parent, " ", $key, " = ", json_encode($value, JSON_UNESCAPED_UNICODE), PHP_EOL;
                     }
-                } else {
-                    echo $parent, " ", $key, " = ", $value, PHP_EOL;
                 }
-            } else {
-                echo $parent, " {$key} = ", $value, PHP_EOL;
             }
         }
     }

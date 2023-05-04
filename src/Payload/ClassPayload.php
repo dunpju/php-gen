@@ -8,5 +8,8 @@ namespace Dengpju\PhpGen\Payload;
 class ClassPayload
 {
     public string $path = "";
-    public array $methods = [];
+    /**
+     * @var array PropertyPayload[]
+     */
+    public array $properties = [];
 }
