@@ -31,15 +31,17 @@ class Route extends AbstractProcess
 
     public function handle(): void
     {
-        go(function () {
-            $descriptorspec = [
-                0 => STDIN,
-                1 => STDOUT,
-                2 => STDERR,
-            ];
+        foreach (config("server.servers") as $server) {
+            go(function () use ($server){
+                $descriptorspec = [
+                    0 => STDIN,
+                    1 => STDOUT,
+                    2 => STDERR,
+                ];
 
-            proc_open("php bin/hyperf.php dengpju:route server=http", $descriptorspec, $pipes);
-        });
+                proc_open(sprintf("php bin/hyperf.php dengpju:route server=%s", $server["name"]), $descriptorspec, $pipes);
+            });
+        }
         while (true){sleep(2);}
     }
 }
