@@ -4,6 +4,7 @@ namespace Dengpju\PhpGen\Visitor;
 
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelRewriteTableVisitor extends NodeVisitorAbstract
@@ -17,9 +18,9 @@ class ModelRewriteTableVisitor extends NodeVisitorAbstract
 
     /**
      * @param Node $node
-     * @return Node\Stmt\Namespace_|Node\Stmt\Property|null
+     * @return Node|Class_|Node\Stmt\Namespace_|Node\Stmt\Property|null
      */
-    public function enterNode(Node $node): Node\Stmt\Property|Node\Stmt\Namespace_|null
+    public function enterNode(Node $node): Node|Node\Stmt\Property|Class_|Node\Stmt\Namespace_|null
     {
         if ($node instanceof Node\Stmt\Property) {
             if ($node->props[0]->name->toLowerString() === 'table') {
@@ -31,6 +32,8 @@ class ModelRewriteTableVisitor extends NodeVisitorAbstract
             }
         } elseif ($node instanceof Node\Stmt\Namespace_) {
             $this->namespace = implode("\\", $node->name->parts);
+            return $node;
+        } elseif ($node instanceof Node\Stmt\Class_) {
             return $node;
         }
         return null;
