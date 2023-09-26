@@ -141,7 +141,6 @@ class ModelCommand extends BaseCommand
                     $cmd .= " --prefix='{$prefix}'";
                 }
                 $res = `$cmd`;
-                usleep(200);
                 $beforeClass = Str::studly(Str::singular($tableName));
                 $tableName = Str::replaceFirst($inputPrefix, '', $tableName);
                 $afterClass = Str::studly(Str::singular($tableName));
