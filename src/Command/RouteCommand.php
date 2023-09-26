@@ -45,6 +45,7 @@ class RouteCommand extends BaseCommand
 
         $server = $this->input->getArgument('server');
         $server = str_replace("server=", "", $server);
+        $this->line("========  {$server} route info  ========", 'info');
         $routers = make(DispatcherFactory::class)->getRouter($server);
 
         $routerCollector = [];
