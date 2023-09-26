@@ -47,7 +47,7 @@ class ModelCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Model.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . 'php bin/hyperf.php dengpju:model table=all --conn=default --prefix=fm_ --path=Default Or php bin/hyperf.php dengpju:model conn=default --table=table-name --prefix=fm_ --path=Default');
+        $this->setDescription($description . 'php bin/hyperf.php dengpju:model table=all --conn=default --prefix=fm_ --path=Default Or php bin/hyperf.php dengpju:model table=table-name --conn=default --prefix=fm_ --path=Default');
         $this->addArgument('table', InputOption::VALUE_REQUIRED, 'Table Name,all Generate Full Table Model');
         $this->addOption('conn', null, InputOption::VALUE_REQUIRED, 'Data connection');
         $this->addOption('prefix', null, InputOption::VALUE_OPTIONAL, 'Table Prefix');
