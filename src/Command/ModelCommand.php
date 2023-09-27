@@ -106,7 +106,7 @@ class ModelCommand extends BaseCommand
         $database = $connConfig['database'];
         $prefix = $connConfig['prefix'];
         if ($inputPrefix) {
-            if ($prefix) {
+            if ($prefix && ($prefix != $inputPrefix)) {
                 $this->line('database.prefix It needs to be configured as an empty string.', 'info');
                 return;
             }
