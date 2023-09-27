@@ -153,7 +153,7 @@ class ModelCommand extends BaseCommand
 
                 $res = `$cmd`;
 
-                $this->ast($beforeAbsolutePath, $path, $afterClass, $inputPrefix);
+                $this->afterAst($beforeAbsolutePath, $path, $afterClass, $inputPrefix);
                 $this->output->writeln(sprintf('<info>Model %s\%s was created.</info>', $this->namespace, $afterClass));
             }
         }
@@ -191,7 +191,7 @@ class ModelCommand extends BaseCommand
      * @param string $prefix
      * @return void
      */
-    private function ast(string $beforeAbsolutePath, string $afterPath, string $afterClass, string $prefix)
+    private function afterAst(string $beforeAbsolutePath, string $afterPath, string $afterClass, string $prefix)
     {
         $beforeContext = file_get_contents($beforeAbsolutePath);
         $afterAbsolutePath = BASE_PATH . "/{$afterPath}/{$afterClass}.php";
@@ -204,7 +204,9 @@ class ModelCommand extends BaseCommand
             $ast = $traverser->traverse($ast);
             $context = $this->printer->prettyPrintFile($ast);
             file_put_contents($afterAbsolutePath, $context);
-            unlink($beforeAbsolutePath);
+            if ($beforeAbsolutePath != $afterAbsolutePath) {
+                unlink($beforeAbsolutePath);
+            }
             $this->namespace = $modelRewriteTableVisitor->namespace;
         } catch (Error $error) {
             echo "Parse error: {$error->getMessage()}\n";
