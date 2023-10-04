@@ -7,6 +7,7 @@ namespace Dengpju\PhpGen\Command;
 use Dengpju\PhpGen\Utils\CamelizeUtil;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Dengpju\PhpGen\Visitor\ModelRewriteClassVisitor;
+use Dengpju\PhpGen\Visitor\ModelRewriteTableVisitor;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\Str;
@@ -105,7 +106,8 @@ class ModelCommand extends BaseCommand
         $inheritance = $genModel['inheritance'];
 
         $database = $connConfig['database'];
-        $prefix = $connConfig['prefix'];
+        $connConfigPrefix = $connConfig['prefix'];
+        $prefix = $connConfigPrefix;
         if ($inputPrefix) {
             if ($prefix && ($prefix != $inputPrefix)) {
                 $this->line('database.prefix It needs to be configured as an empty string.', 'info');
@@ -145,16 +147,23 @@ class ModelCommand extends BaseCommand
 
                 $beforeAbsolutePath = BASE_PATH . "/{$beforePath}.php";
                 $afterAbsolutePath = BASE_PATH . "/{$path}/{$afterClass}.php";
-                if (file_exists($afterAbsolutePath)) {
+                if (!$connConfigPrefix && file_exists($afterAbsolutePath)) {
                     copy($afterAbsolutePath, $beforeAbsolutePath);
                 }
 
-                $this->beforeAst($beforeAbsolutePath, $beforeClass, $inputPrefix);
+                if (file_exists($beforeAbsolutePath)) {
+                    $this->beforeAst($beforeAbsolutePath, $beforeClass, $inputPrefix);
+                }
 
                 $res = `$cmd`;
 
-                $this->afterAst($beforeAbsolutePath, $path, $afterClass, $inputPrefix);
-                $this->output->writeln(sprintf('<info>Model %s\%s was created.</info>', $this->namespace, $afterClass));
+                if (!$connConfigPrefix) {
+                    $this->afterAst($beforeAbsolutePath, $path, $afterClass, $inputPrefix);
+                    $this->output->writeln(sprintf('<info>Model %s\%s was created.</info>', $this->namespace, $afterClass));
+                } else {
+                    $this->tableAst($path, $afterClass, $connConfigPrefix);
+                    $this->line(str_replace(PHP_EOL, "", $res), 'info');
+                }
             }
         }
         $this->line('finish', 'info');
@@ -166,15 +175,15 @@ class ModelCommand extends BaseCommand
      * @param string $prefix
      * @return void
      */
-    private function beforeAst(string $beforeAbsolutePath, string $beforeClass, string $prefix)
+    private function beforeAst(string $beforeAbsolutePath, string $beforeClass, string $prefix): void
     {
         $beforeContext = file_get_contents($beforeAbsolutePath);
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         try {
             $ast = $parser->parse($beforeContext);
             $traverser = new NodeTraverser();
-            $modelRewriteTableVisitor = new ModelRewriteClassVisitor($beforeClass, $prefix);
-            $traverser->addVisitor($modelRewriteTableVisitor);
+            $modelRewriteClassVisitor = new ModelRewriteClassVisitor($beforeClass, $prefix);
+            $traverser->addVisitor($modelRewriteClassVisitor);
             $ast = $traverser->traverse($ast);
             $context = $this->printer->prettyPrintFile($ast);
             file_put_contents($beforeAbsolutePath, $context);
@@ -191,7 +200,7 @@ class ModelCommand extends BaseCommand
      * @param string $prefix
      * @return void
      */
-    private function afterAst(string $beforeAbsolutePath, string $afterPath, string $afterClass, string $prefix)
+    private function afterAst(string $beforeAbsolutePath, string $afterPath, string $afterClass, string $prefix): void
     {
         $beforeContext = file_get_contents($beforeAbsolutePath);
         $afterAbsolutePath = BASE_PATH . "/{$afterPath}/{$afterClass}.php";
@@ -199,14 +208,41 @@ class ModelCommand extends BaseCommand
         try {
             $ast = $parser->parse($beforeContext);
             $traverser = new NodeTraverser();
-            $modelRewriteTableVisitor = new ModelRewriteClassVisitor($afterClass, $prefix);
-            $traverser->addVisitor($modelRewriteTableVisitor);
+            $modelRewriteClassVisitor = new ModelRewriteClassVisitor($afterClass, $prefix);
+            $traverser->addVisitor($modelRewriteClassVisitor);
             $ast = $traverser->traverse($ast);
             $context = $this->printer->prettyPrintFile($ast);
             file_put_contents($afterAbsolutePath, $context);
             if ($beforeAbsolutePath != $afterAbsolutePath) {
                 unlink($beforeAbsolutePath);
             }
+            $this->namespace = $modelRewriteClassVisitor->namespace;
+        } catch (Error $error) {
+            echo "Parse error: {$error->getMessage()}\n";
+            return;
+        }
+    }
+
+    /**
+     * @param string $beforeAbsolutePath
+     * @param string $afterPath
+     * @param string $afterClass
+     * @param string $prefix
+     * @return void
+     */
+    private function tableAst(string $afterPath, string $afterClass, string $prefix): void
+    {
+        $afterAbsolutePath = BASE_PATH . "/{$afterPath}/{$afterClass}.php";
+        $context = file_get_contents($afterAbsolutePath);
+        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        try {
+            $ast = $parser->parse($context);
+            $traverser = new NodeTraverser();
+            $modelRewriteTableVisitor = new ModelRewriteTableVisitor($prefix);
+            $traverser->addVisitor($modelRewriteTableVisitor);
+            $ast = $traverser->traverse($ast);
+            $context = $this->printer->prettyPrintFile($ast);
+            file_put_contents($afterAbsolutePath, $context);
             $this->namespace = $modelRewriteTableVisitor->namespace;
         } catch (Error $error) {
             echo "Parse error: {$error->getMessage()}\n";
