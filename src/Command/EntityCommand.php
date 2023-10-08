@@ -9,6 +9,7 @@ use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * php bin/hyperf.php dengpju:entity conn=default model=all
@@ -28,18 +29,10 @@ class EntityCommand extends BaseCommand
     {
         parent::configure();
         $description = str_pad("Build Entity.", self::STR_PAD_LENGTH, " ", STR_PAD_RIGHT);
-        $this->setDescription($description . "php bin/hyperf.php dengpju:entity conn=default model=all Or php bin/hyperf.php dengpju:entity conn=default model=ModelName");
-    }
-
-    /**
-     * @return array[]
-     */
-    protected function getArguments(): array
-    {
-        return [
-            ['conn', InputArgument::REQUIRED, 'Data connection'],
-            ['model', InputArgument::REQUIRED, 'Model Class Name,all Generate Full Model Class Entity'],
-        ];
+        $this->setDescription($description . "php bin/hyperf.php dengpju:entity model=all --conn=default --modelPath=Default Or php bin/hyperf.php dengpju:entity model=ModelName --conn=default --modelPath=Default");
+        $this->addArgument('model', InputOption::VALUE_REQUIRED, 'Model Class Name,all Generate Full Model Class Entity');
+        $this->addOption('conn', null, InputOption::VALUE_REQUIRED, 'Data connection');
+        $this->addOption('modelPath', null, InputOption::VALUE_OPTIONAL, 'store directory of model, relatively the configuration of gen:model.path');
     }
 
     /**
@@ -49,16 +42,22 @@ class EntityCommand extends BaseCommand
     {
         $this->autoPublish();
 
-        $conn = $this->input->getArgument('conn');
         $inputModelName = $this->input->getArgument('model');
         $inputModelName = str_replace("model=", "", $inputModelName);
-
+        if (!$inputModelName) {
+            $this->line('model name can not be empty.', 'info');
+            return;
+        }
+        $conn = $this->input->getOption('conn') ?? 'default';
         $databases = config("databases");
         $conns = array_keys($databases);
-        $conn = str_replace("conn=", "", $conn);
         if (!in_array($conn, $conns)) {
-            echo "Connection:{$conn} No Exist" . PHP_EOL;
-            exit(1);
+            $this->line("Connection:{$conn} No Exist", 'info');
+            return;
+        }
+        $inputModelPath = $this->input->getOption('modelPath') ?? "";
+        if (!$inputModelPath) {
+            $inputModelPath = ucfirst(CamelizeUtil::camelize($conn));
         }
 
         $this->uses = config("gen.entity.uses");
@@ -71,13 +70,13 @@ class EntityCommand extends BaseCommand
         $connConfig = config("databases.{$conn}");
         $commands = $connConfig['commands'];
         $genModel = $commands['gen:model'];
-        $modelPath = $genModel['path'] . "/" . ucfirst(CamelizeUtil::camelize($conn));
+        $modelPath = $genModel['path'] . "/" . $inputModelPath;
         $modelNamespace = str_replace("/", "\\", ucfirst($modelPath));
 
-        $storePath = "{$this->baseStorePath}/" . ucfirst(CamelizeUtil::camelize($conn));
+        $storePath = "{$this->baseStorePath}/" . $inputModelPath;
         if (!DirUtil::mkdir($storePath)) {
-            echo "Failed to create a directory." . PHP_EOL;
-            exit(1);
+            $this->line('Failed to create a directory.', 'info');
+            return;
         }
 
         $scanPath = BASE_PATH . "/{$modelPath}";
