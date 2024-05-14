@@ -63,15 +63,14 @@ class RouteCommand extends BaseCommand
                     if (is_array($handler->callback)) {
                         $handle = "{$handler->callback[0]}@{$handler->callback[1]}";
                         $key = "{$handle}.{$method}.{$handler->route}";
-                        $routerCollector[$key] = [$method, $handler->route, $handle, sprintf("[%s]", implode(",", $middlewares))];
+                        $routerCollector[$key] = [$method, $handler->route, $handle];
                     } elseif (is_callable($handler->callback)) {
                         $key = "Closure().{$method}.{$handler->route}";
-                        $routerCollector[$key] = [$method, $handler->route, "Closure()", sprintf("[%s]", implode(",", $middlewares))];
+                        $routerCollector[$key] = [$method, $handler->route, "Closure()"];
                     } elseif (is_string($handler->callback)) {
                         $key = "{$handler->callback}.{$method}.{$handler->route}";
-                        $routerCollector[$key] = [$method, $handler->route, $handler->callback, sprintf("[%s]", implode(",", $middlewares))];
+                        $routerCollector[$key] = [$method, $handler->route, $handler->callback];
                     }
-
                 }
             }
         }
@@ -81,8 +80,7 @@ class RouteCommand extends BaseCommand
             $method = str_pad($item[0], 8, " ", STR_PAD_RIGHT) . " ";
             $route = str_pad($item[1], 48, " ", STR_PAD_RIGHT) . " ";
             $handle = str_pad($item[2], 64, " ", STR_PAD_RIGHT);
-            $middleware = $item[3];
-            $this->line("{$method}{$route}{$handle}{$middleware}", 'info');
+            $this->line("{$method}{$route}{$handle}", 'info');
         }
     }
 }
