@@ -10,7 +10,7 @@ use Dengpju\PhpGen\Visitor\ModelRewriteClassVisitor;
 use Dengpju\PhpGen\Visitor\ModelRewriteTableVisitor;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Error;
 use PhpParser\Lexer;
 use PhpParser\Lexer\Emulative;
@@ -21,6 +21,8 @@ use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
+
+use function Hyperf\Config\config;
 
 /**
  * php bin/hyperf.php dengpju:model table=all --conn=default --prefix=fm_ --path=Default

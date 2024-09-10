@@ -8,6 +8,8 @@ namespace Dengpju\PhpGen\Crontab;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Crontab\Annotation\Crontab;
 
+use function Hyperf\Config\config;
+
 /**
  * Class LogClearCrontab
  * @package App\Crontab

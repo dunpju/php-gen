@@ -10,6 +10,8 @@ use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
+use function Hyperf\Config\config;
+
 /**
  * php bin/hyperf.php dengpju:enum conn=default name=yes_or_no flag='是否:no-1-否,yes-2-是'
  * Class EnumCommand

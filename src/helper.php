@@ -2,9 +2,11 @@
 declare(strict_types=1);
 
 use Dengpju\PhpGen\Traits\RuleMessage;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
+
+use function Hyperf\Support\make;
 
 
 if (!function_exists('validate')) {

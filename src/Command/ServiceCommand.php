@@ -9,6 +9,8 @@ use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
+use function Hyperf\Config\config;
+
 /**
  * php bin/hyperf.php dengpju:service name=name path=path
  * Class ServiceCommand

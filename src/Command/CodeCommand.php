@@ -13,6 +13,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
+use function Hyperf\Config\config;
+
 /**
  * php bin/hyperf.php dengpju:route server=http
  * Class RouteCommand

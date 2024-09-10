@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Payload\ClassPayload;
-use Dengpju\PhpGen\Payload\MethodPayload;
 use Dengpju\PhpGen\Payload\PropertyPayload;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Config\config;
 
 /**
  * php bin/hyperf.php dengpju:config

@@ -6,11 +6,12 @@ namespace Dengpju\PhpGen\Command;
 
 use Dengpju\PhpGen\Utils\CamelizeUtil;
 use Dengpju\PhpGen\Utils\DirUtil;
-use Hyperf\DbConnection\Model\Model;
 use Hyperf\Command\Annotation\Command;
+use Hyperf\DbConnection\Model\Model;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+
+use function Hyperf\Config\config;
 
 /**
  * php bin/hyperf.php dengpju:dao conn=default model=all

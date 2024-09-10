@@ -2,7 +2,7 @@
 
 namespace Dengpju\PhpGen\Visitor;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeVisitorAbstract;

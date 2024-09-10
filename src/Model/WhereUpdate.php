@@ -24,7 +24,7 @@ class WhereUpdate
      * @param string $boolean
      * @return $this
      */
-    public function where(string $column, $operator = null, $value = null, $boolean = 'and'): static
+    public function where(string $column, $operator = null, $value = null, string $boolean = 'and'): static
     {
         $this->wheres[] = new Where($column, $operator, $value, $boolean);
 

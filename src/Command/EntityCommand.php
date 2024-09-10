@@ -8,8 +8,9 @@ use Dengpju\PhpGen\Utils\CamelizeUtil;
 use Dengpju\PhpGen\Utils\DirUtil;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+
+use function Hyperf\Config\config;
 
 /**
  * php bin/hyperf.php dengpju:entity conn=default model=all

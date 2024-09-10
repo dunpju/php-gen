@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dengpju\PhpGen\Aspect;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Di\Annotation\Aspect;
@@ -11,7 +12,6 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\ApplicationContext;
 
 #[Aspect]
 class CrontabAspect extends AbstractAspect

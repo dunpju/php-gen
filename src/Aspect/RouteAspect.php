@@ -11,6 +11,8 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
+use function Hyperf\Config\config;
+
 #[Aspect]
 class RouteAspect extends AbstractAspect
 {

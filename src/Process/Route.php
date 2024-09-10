@@ -8,6 +8,9 @@ namespace Dengpju\PhpGen\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
+use function Hyperf\Config\config;
+use function Hyperf\Coroutine\go;
+
 #[Process(name: "route")]
 class Route extends AbstractProcess
 {

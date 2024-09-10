@@ -9,6 +9,8 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
+use function Hyperf\Support\make;
+
 /**
  * php bin/hyperf.php dengpju:route server=http
  * Class RouteCommand

@@ -6,8 +6,8 @@ namespace Dengpju\PhpGen\Traits;
 
 
 use Dengpju\PhpGen\Constants\ResponseCode;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
 
 trait ApiResponseTrait

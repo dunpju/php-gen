@@ -5,6 +5,7 @@ namespace Dengpju\PhpGen\Model;
 
 
 use Dengpju\PhpGen\Exception\ModelException;
+use Hyperf\DbConnection\Model\Model;
 
 /**
  * @method array attributesToArray()
@@ -27,6 +28,7 @@ trait Save
     public function whereUpdate(bool $is = true): WhereUpdate
     {
         $this->isWhereUpdate = $is;
+        /** @var $this Model */
         $this->WhereUpdate = new WhereUpdate($this);
         return $this->WhereUpdate;
     }
