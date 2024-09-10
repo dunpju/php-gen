@@ -6,10 +6,10 @@ namespace Dengpju\PhpGen\Abstracts;
 
 
 use Dengpju\PhpGen\Constants\ResponseCode;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
 
