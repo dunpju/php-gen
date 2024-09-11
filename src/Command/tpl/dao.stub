@@ -81,9 +81,9 @@ class %CLASS% extends %INHERITANCE%
     /**
      * @param array $%PRIMARY_KEY%s
      * @param array|string[] $fields
-     * @return \Hyperf\Database\Model\Collection|array|\Hyperf\Utils\Collection
+     * @return \Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection
      */
-    public function getBy%UC_PRIMARY_KEY%s(array $%PRIMARY_KEY%s, array $fields = ["*"]): \Hyperf\Database\Model\Collection|array|\Hyperf\Utils\Collection
+    public function getBy%UC_PRIMARY_KEY%s(array $%PRIMARY_KEY%s, array $fields = ["*"]): \Hyperf\Database\Model\Collection|array
     {
         return $this->model::query()->select($fields)->whereIn($this->primaryKey, $%PRIMARY_KEY%s)->get();
     }
