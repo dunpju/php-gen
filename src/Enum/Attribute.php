@@ -39,7 +39,7 @@ trait Attribute
                 foreach ($attributes as $attribute) {
                     $attrInstance = $attribute->newInstance();
                     if ($attrInstance instanceof EnumAttributeInterface) {
-                        static::$container[static::class][$val] = $attrInstance;
+                        static::$container[static::class][$name] = $attrInstance;
                     }
                 }
             }
@@ -56,24 +56,12 @@ trait Attribute
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (method_exists(EnumAttributeInterface::class, $name)) {
-            if (count($arguments) < 1) {
-                throw new EnumException("枚举Pointer参数错误");
-            }
-            $value = reset($arguments);
-            if (!isset(static::$container[static::class])) {
-                static::init();
-            } else {
-                if (!isset(static::$container[static::class][$value])) {
-                    static::init();
-                }
-            }
-
-            if (!isset(static::$container[static::class][$value])) {
-                $class = basename(str_replace("\\", "/", static::class));
-                throw new EnumException("[{$value}]不存在{$class}枚举中");
-            }
-            return static::$container[static::class][$value];
+        if (!isset(static::$container[static::class])) {
+            static::init();
         }
+        if (isset(static::$container[static::class][$name])) {
+            return static::$container[static::class][$name];
+        }
+        return static::$name(...$arguments);
     }
 }
